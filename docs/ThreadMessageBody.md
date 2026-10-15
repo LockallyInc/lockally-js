@@ -1,0 +1,58 @@
+
+# ThreadMessageBody
+
+
+## Properties
+
+Name | Type
+------------ | -------------
+`id` | string
+`direction` | string
+`rfcMessageId` | string
+`inReplyTo` | string
+`subject` | string
+`from` | string
+`to` | Array&lt;string&gt;
+`snippet` | string
+`hasAttachments` | boolean
+`attachments` | [Array&lt;Attachment&gt;](Attachment.md)
+`annotations` | [Annotations](Annotations.md)
+`receivedAt` | Date
+`body` | [ThreadMessageBodyAllOfBody](ThreadMessageBodyAllOfBody.md)
+
+## Example
+
+```typescript
+import type { ThreadMessageBody } from 'lockally'
+
+// TODO: Update the object below with actual values
+const example = {
+  "id": null,
+  "direction": null,
+  "rfcMessageId": null,
+  "inReplyTo": null,
+  "subject": null,
+  "from": null,
+  "to": null,
+  "snippet": null,
+  "hasAttachments": null,
+  "attachments": null,
+  "annotations": null,
+  "receivedAt": null,
+  "body": null,
+} satisfies ThreadMessageBody
+
+console.log(example)
+
+// Convert the instance to a JSON string
+const exampleJSON: string = JSON.stringify(example)
+console.log(exampleJSON)
+
+// Parse the JSON string back to an object
+const exampleParsed = JSON.parse(exampleJSON) as ThreadMessageBody
+console.log(exampleParsed)
+```
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
