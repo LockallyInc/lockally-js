@@ -331,7 +331,7 @@ This endpoint does not need any parameter.
 
 ## getTenantHealth
 
-> object getTenantHealth()
+> TenantHealthReport getTenantHealth()
 
 Full tenant health report
 
@@ -370,7 +370,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-**object**
+[**TenantHealthReport**](TenantHealthReport.md)
 
 ### Authorization
 

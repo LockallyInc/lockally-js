@@ -18,6 +18,8 @@ Name | Type
 `updatedAt` | Date
 `bounceReason` | string
 `sizeBytes` | number
+`metadata` | { [key: string]: string; }
+`tags` | Array&lt;string&gt;
 `from` | string
 `to` | Array&lt;string&gt;
 `cc` | Array&lt;string&gt;
@@ -44,6 +46,8 @@ const example = {
   "updatedAt": null,
   "bounceReason": null,
   "sizeBytes": null,
+  "metadata": null,
+  "tags": null,
   "from": null,
   "to": null,
   "cc": null,

@@ -49,6 +49,12 @@ export interface BatchResult {
      * @memberof BatchResult
      */
     error?: string;
+    /**
+     * Advisory, and NOT a failure. Today the only one is a template variable the template referenced and the request never supplied, which rendered as the empty string.
+     * @type {string}
+     * @memberof BatchResult
+     */
+    warning?: string;
 }
 
 
@@ -86,6 +92,7 @@ export function BatchResultFromJSONTyped(json: any, ignoreDiscriminator: boolean
         'messageId': json['message_id'] == null ? undefined : json['message_id'],
         'status': json['status'] == null ? undefined : json['status'],
         'error': json['error'] == null ? undefined : json['error'],
+        'warning': json['warning'] == null ? undefined : json['warning'],
     };
 }
 
@@ -105,6 +112,7 @@ export function BatchResultToJSONTyped(value?: BatchResult | null, ignoreDiscrim
         'message_id': value['messageId'],
         'status': value['status'],
         'error': value['error'],
+        'warning': value['warning'],
     };
 }
 

@@ -85,6 +85,18 @@ export interface Message {
      * @memberof Message
      */
     sizeBytes?: number;
+    /**
+     * The sender's own key/value from the send request. Always present; `{}` when none was set.
+     * @type {{ [key: string]: string; }}
+     * @memberof Message
+     */
+    metadata?: { [key: string]: string; };
+    /**
+     * Grouping labels, lowercased and deduplicated. Always present; `[]` when none were set.
+     * @type {Array<string>}
+     * @memberof Message
+     */
+    tags?: Array<string>;
 }
 
 
@@ -138,6 +150,8 @@ export function MessageFromJSONTyped(json: any, ignoreDiscriminator: boolean): M
         'updatedAt': (new Date(json['updated_at'])),
         'bounceReason': json['bounce_reason'] == null ? undefined : json['bounce_reason'],
         'sizeBytes': json['size_bytes'] == null ? undefined : json['size_bytes'],
+        'metadata': json['metadata'] == null ? undefined : json['metadata'],
+        'tags': json['tags'] == null ? undefined : json['tags'],
     };
 }
 
@@ -163,6 +177,8 @@ export function MessageToJSONTyped(value?: Message | null, ignoreDiscriminator: 
         'updated_at': value['updatedAt'].toISOString(),
         'bounce_reason': value['bounceReason'],
         'size_bytes': value['sizeBytes'],
+        'metadata': value['metadata'],
+        'tags': value['tags'],
     };
 }
 

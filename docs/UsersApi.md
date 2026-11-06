@@ -5,7 +5,7 @@ All URIs are relative to *https://api.lockally.com*
 | Method | HTTP request | Description |
 |------------- | ------------- | -------------|
 | [**createUser**](UsersApi.md#createuseroperation) | **POST** /v1/users | Create a user |
-| [**deleteUser**](UsersApi.md#deleteuser) | **DELETE** /v1/users/{id} | Delete a user |
+| [**deleteUser**](UsersApi.md#deleteuser) | **DELETE** /v1/users/{id} | Deprovision a user |
 | [**getUser**](UsersApi.md#getuser) | **GET** /v1/users/{id} | Get a user |
 | [**listUsers**](UsersApi.md#listusers) | **GET** /v1/users | List users |
 | [**updateUser**](UsersApi.md#updateuseroperation) | **PATCH** /v1/users/{id} | Update a user |
@@ -89,9 +89,9 @@ example().catch(console.error);
 
 > deleteUser(id)
 
-Delete a user
+Deprovision a user
 
-Soft-deletes the user by setting status to deprovisioned.
+Sets the user\&#39;s status to &#x60;deprovisioned&#x60; and ends their access: each of their mailboxes and their console membership is disabled, app passwords are revoked, and every webmail and console session ends. Their mail is kept. API keys belong to the workspace and are not revoked; rotate any the person had access to. 
 
 ### Example
 
@@ -155,6 +155,7 @@ example().catch(console.error);
 | **401** | Missing, malformed, or invalid API key. |  -  |
 | **403** | API key lacks the required scope. |  -  |
 | **404** | Resource not found under the calling tenant. |  -  |
+| **409** | The person is the caller, or the workspace\&#39;s last active admin. |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
@@ -308,6 +309,8 @@ example().catch(console.error);
 
 Update a user
 
+Setting &#x60;status&#x60; to &#x60;suspended&#x60; or &#x60;deprovisioned&#x60; takes away everything the person signs in with: each of their mailboxes and their console membership is disabled, app passwords are revoked, and every webmail and console session ends. Setting it back to &#x60;active&#x60; restores what the suspension disabled, and nothing an admin disabled for another reason. API keys belong to the workspace, not to the person who created them, and are not revoked; rotate any the person had access to. 
+
 ### Example
 
 ```ts
@@ -374,6 +377,7 @@ example().catch(console.error);
 | **401** | Missing, malformed, or invalid API key. |  -  |
 | **403** | API key lacks the required scope. |  -  |
 | **404** | Resource not found under the calling tenant. |  -  |
+| **409** | The person is the caller, or the workspace\&#39;s last active admin. |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 

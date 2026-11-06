@@ -20,6 +20,10 @@ Name | Type
 `templateId` | string
 `variables` | { [key: string]: string; }
 `sendAt` | Date
+`metadata` | { [key: string]: string; }
+`tags` | Array&lt;string&gt;
+`trackOpens` | boolean
+`trackClicks` | boolean
 `attachments` | [Array&lt;SendEmailRequestAttachmentsInner&gt;](SendEmailRequestAttachmentsInner.md)
 
 ## Example
@@ -43,6 +47,10 @@ const example = {
   "templateId": null,
   "variables": null,
   "sendAt": null,
+  "metadata": null,
+  "tags": null,
+  "trackOpens": null,
+  "trackClicks": null,
   "attachments": null,
 } satisfies SendEmailRequest
 

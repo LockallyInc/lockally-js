@@ -9,6 +9,7 @@ Name | Type
 `label` | string
 `scopes` | Array&lt;string&gt;
 `test` | boolean
+`expiresAt` | Date
 
 ## Example
 
@@ -20,6 +21,7 @@ const example = {
   "label": ci-pipeline,
   "scopes": null,
   "test": null,
+  "expiresAt": null,
 } satisfies CreateApiKeyRequest
 
 console.log(example)

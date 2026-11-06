@@ -7,6 +7,8 @@ All URIs are relative to *https://api.lockally.com*
 | [**createApiKey**](ApiKeysApi.md#createapikeyoperation) | **POST** /v1/api-keys | Create an API key |
 | [**listApiKeys**](ApiKeysApi.md#listapikeys) | **GET** /v1/api-keys | List API keys |
 | [**revokeApiKey**](ApiKeysApi.md#revokeapikey) | **DELETE** /v1/api-keys/{id} | Revoke an API key |
+| [**rotateApiKey**](ApiKeysApi.md#rotateapikeyoperation) | **POST** /v1/api-keys/{id}/rotate | Rotate an API key |
+| [**updateApiKey**](ApiKeysApi.md#updateapikeyoperation) | **PATCH** /v1/api-keys/{id} | Update an API key |
 
 
 
@@ -86,7 +88,7 @@ example().catch(console.error);
 
 ## listApiKeys
 
-> ListApiKeys200Response listApiKeys()
+> ListApiKeys200Response listApiKeys(sort, order)
 
 List API keys
 
@@ -109,8 +111,15 @@ async function example() {
   });
   const api = new ApiKeysApi(config);
 
+  const body = {
+    // 'label' | 'created_at' | 'last_used_at' | 'expires_at' | Field to order by. This list holds tens of rows per account, so every column is offered and none needs an index. (optional)
+    sort: sort_example,
+    // 'asc' | 'desc' | Defaults to desc for the default field and asc for any other. Always tie-broken on id, so the order is total. (optional)
+    order: order_example,
+  } satisfies ListApiKeysRequest;
+
   try {
-    const data = await api.listApiKeys();
+    const data = await api.listApiKeys(body);
     console.log(data);
   } catch (error) {
     console.error(error);
@@ -123,7 +132,11 @@ example().catch(console.error);
 
 ### Parameters
 
-This endpoint does not need any parameter.
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **sort** | `label`, `created_at`, `last_used_at`, `expires_at` | Field to order by. This list holds tens of rows per account, so every column is offered and none needs an index. | [Optional] [Defaults to `&#39;created_at&#39;`] [Enum: label, created_at, last_used_at, expires_at] |
+| **order** | `asc`, `desc` | Defaults to desc for the default field and asc for any other. Always tie-broken on id, so the order is total. | [Optional] [Defaults to `undefined`] [Enum: asc, desc] |
 
 ### Return type
 
@@ -220,6 +233,164 @@ example().catch(console.error);
 | **403** | API key lacks the required scope. |  -  |
 | **404** | Resource not found under the calling tenant. |  -  |
 | **409** | Refused, key is the one in use for this request. |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
+## rotateApiKey
+
+> CreateApiKey201Response rotateApiKey(id, rotateApiKeyRequest)
+
+Rotate an API key
+
+Issues a successor key and puts a short expiry on this one, so **both work until the overlap ends**. That window is the point: without it, rotation is revocation with extra steps and every caller has to swap credentials in the same instant.  The successor inherits this key\&#39;s scopes, its label (the label names the integration, and the integration has not changed) and its test flag. Its full &#x60;secret&#x60; is in this response and nowhere else.  The response\&#39;s &#x60;expires_at&#x60; is the **predecessor\&#39;s** deadline, so you can see from the rotation itself how long you have to cut over.  A key that has already been rotated cannot be rotated again: chaining overlaps would leave several live keys for one integration, which is the opposite of the intent. Rotate the successor instead. 
+
+### Example
+
+```ts
+import {
+  Configuration,
+  ApiKeysApi,
+} from 'lockally';
+import type { RotateApiKeyOperationRequest } from 'lockally';
+
+async function example() {
+  console.log("🚀 Testing lockally SDK...");
+  const config = new Configuration({ 
+    // Configure HTTP bearer authorization: bearerAuth
+    accessToken: "YOUR BEARER TOKEN",
+  });
+  const api = new ApiKeysApi(config);
+
+  const body = {
+    // string
+    id: 38400000-8cf0-11bd-b23e-10b96e4ef00d,
+    // RotateApiKeyRequest (optional)
+    rotateApiKeyRequest: ...,
+  } satisfies RotateApiKeyOperationRequest;
+
+  try {
+    const data = await api.rotateApiKey(body);
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **id** | `string` |  | [Defaults to `undefined`] |
+| **rotateApiKeyRequest** | [RotateApiKeyRequest](RotateApiKeyRequest.md) |  | [Optional] |
+
+### Return type
+
+[**CreateApiKey201Response**](CreateApiKey201Response.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+- **Content-Type**: `application/json`
+- **Accept**: `application/json`, `application/problem+json`
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **201** | The successor key. Its &#x60;secret&#x60; is shown only here; &#x60;expires_at&#x60; is the predecessor\&#39;s deadline. |  -  |
+| **400** | Malformed request. |  -  |
+| **401** | Missing, malformed, or invalid API key. |  -  |
+| **403** | API key lacks the required scope. |  -  |
+| **404** | Resource not found under the calling tenant. |  -  |
+| **409** | The key is revoked, or was already rotated. |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
+## updateApiKey
+
+> APIKey updateApiKey(id, updateApiKeyRequest)
+
+Update an API key
+
+Changes a key\&#39;s label, scopes or expiry in place, without reissuing the secret.  **Every field is optional and absent means unchanged.** Renaming a key does not clear its expiry. For &#x60;expires_at&#x60; there are three distinct requests: omit the field to leave the expiry alone, send a timestamp to set one, and send an explicit &#x60;null&#x60; to remove one.  Scopes are replaced wholesale, not merged. This endpoint does not restrict which scopes you may grant, because &#x60;POST /v1/api-keys&#x60; never has either: a key with &#x60;tenant:admin&#x60; can already mint a key with any scope, so &#x60;tenant:admin&#x60; is root-equivalent for key management.  A revoked key cannot be updated. 
+
+### Example
+
+```ts
+import {
+  Configuration,
+  ApiKeysApi,
+} from 'lockally';
+import type { UpdateApiKeyOperationRequest } from 'lockally';
+
+async function example() {
+  console.log("🚀 Testing lockally SDK...");
+  const config = new Configuration({ 
+    // Configure HTTP bearer authorization: bearerAuth
+    accessToken: "YOUR BEARER TOKEN",
+  });
+  const api = new ApiKeysApi(config);
+
+  const body = {
+    // string
+    id: 38400000-8cf0-11bd-b23e-10b96e4ef00d,
+    // UpdateApiKeyRequest
+    updateApiKeyRequest: ...,
+  } satisfies UpdateApiKeyOperationRequest;
+
+  try {
+    const data = await api.updateApiKey(body);
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **id** | `string` |  | [Defaults to `undefined`] |
+| **updateApiKeyRequest** | [UpdateApiKeyRequest](UpdateApiKeyRequest.md) |  | |
+
+### Return type
+
+[**APIKey**](APIKey.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+- **Content-Type**: `application/json`
+- **Accept**: `application/json`, `application/problem+json`
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | The updated key. |  -  |
+| **400** | Malformed request. |  -  |
+| **401** | Missing, malformed, or invalid API key. |  -  |
+| **403** | API key lacks the required scope. |  -  |
+| **404** | Resource not found under the calling tenant. |  -  |
+| **409** | The key is revoked and cannot be changed. |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 

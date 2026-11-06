@@ -99,8 +99,8 @@ export interface UsersApiInterface {
     deleteUserRequestOpts(requestParameters: DeleteUserRequest): Promise<runtime.RequestOpts>;
 
     /**
-     * Soft-deletes the user by setting status to deprovisioned.
-     * @summary Delete a user
+     * Sets the user\'s status to `deprovisioned` and ends their access: each of their mailboxes and their console membership is disabled, app passwords are revoked, and every webmail and console session ends. Their mail is kept. API keys belong to the workspace and are not revoked; rotate any the person had access to. 
+     * @summary Deprovision a user
      * @param {string} id 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -109,8 +109,8 @@ export interface UsersApiInterface {
     deleteUserRaw(requestParameters: DeleteUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>>;
 
     /**
-     * Soft-deletes the user by setting status to deprovisioned.
-     * Delete a user
+     * Sets the user\'s status to `deprovisioned` and ends their access: each of their mailboxes and their console membership is disabled, app passwords are revoked, and every webmail and console session ends. Their mail is kept. API keys belong to the workspace and are not revoked; rotate any the person had access to. 
+     * Deprovision a user
      */
     deleteUser(requestParameters: DeleteUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
 
@@ -170,7 +170,7 @@ export interface UsersApiInterface {
     updateUserRequestOpts(requestParameters: UpdateUserOperationRequest): Promise<runtime.RequestOpts>;
 
     /**
-     * 
+     * Setting `status` to `suspended` or `deprovisioned` takes away everything the person signs in with: each of their mailboxes and their console membership is disabled, app passwords are revoked, and every webmail and console session ends. Setting it back to `active` restores what the suspension disabled, and nothing an admin disabled for another reason. API keys belong to the workspace, not to the person who created them, and are not revoked; rotate any the person had access to. 
      * @summary Update a user
      * @param {string} id 
      * @param {UpdateUserRequest} updateUserRequest 
@@ -181,6 +181,7 @@ export interface UsersApiInterface {
     updateUserRaw(requestParameters: UpdateUserOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<User>>;
 
     /**
+     * Setting `status` to `suspended` or `deprovisioned` takes away everything the person signs in with: each of their mailboxes and their console membership is disabled, app passwords are revoked, and every webmail and console session ends. Setting it back to `active` restores what the suspension disabled, and nothing an admin disabled for another reason. API keys belong to the workspace, not to the person who created them, and are not revoked; rotate any the person had access to. 
      * Update a user
      */
     updateUser(requestParameters: UpdateUserOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<User>;
@@ -283,8 +284,8 @@ export class UsersApi extends runtime.BaseAPI implements UsersApiInterface {
     }
 
     /**
-     * Soft-deletes the user by setting status to deprovisioned.
-     * Delete a user
+     * Sets the user\'s status to `deprovisioned` and ends their access: each of their mailboxes and their console membership is disabled, app passwords are revoked, and every webmail and console session ends. Their mail is kept. API keys belong to the workspace and are not revoked; rotate any the person had access to. 
+     * Deprovision a user
      */
     async deleteUserRaw(requestParameters: DeleteUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         const requestOptions = await this.deleteUserRequestOpts(requestParameters);
@@ -294,8 +295,8 @@ export class UsersApi extends runtime.BaseAPI implements UsersApiInterface {
     }
 
     /**
-     * Soft-deletes the user by setting status to deprovisioned.
-     * Delete a user
+     * Sets the user\'s status to `deprovisioned` and ends their access: each of their mailboxes and their console membership is disabled, app passwords are revoked, and every webmail and console session ends. Their mail is kept. API keys belong to the workspace and are not revoked; rotate any the person had access to. 
+     * Deprovision a user
      */
     async deleteUser(requestParameters: DeleteUserRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.deleteUserRaw(requestParameters, initOverrides);
@@ -449,6 +450,7 @@ export class UsersApi extends runtime.BaseAPI implements UsersApiInterface {
     }
 
     /**
+     * Setting `status` to `suspended` or `deprovisioned` takes away everything the person signs in with: each of their mailboxes and their console membership is disabled, app passwords are revoked, and every webmail and console session ends. Setting it back to `active` restores what the suspension disabled, and nothing an admin disabled for another reason. API keys belong to the workspace, not to the person who created them, and are not revoked; rotate any the person had access to. 
      * Update a user
      */
     async updateUserRaw(requestParameters: UpdateUserOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<User>> {
@@ -459,6 +461,7 @@ export class UsersApi extends runtime.BaseAPI implements UsersApiInterface {
     }
 
     /**
+     * Setting `status` to `suspended` or `deprovisioned` takes away everything the person signs in with: each of their mailboxes and their console membership is disabled, app passwords are revoked, and every webmail and console session ends. Setting it back to `active` restores what the suspension disabled, and nothing an admin disabled for another reason. API keys belong to the workspace, not to the person who created them, and are not revoked; rotate any the person had access to. 
      * Update a user
      */
     async updateUser(requestParameters: UpdateUserOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<User> {

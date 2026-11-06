@@ -64,6 +64,11 @@ import {
     MigrationCredentialToJSON,
 } from '../models/MigrationCredential';
 import {
+    type MigrationDNSCheck,
+    MigrationDNSCheckFromJSON,
+    MigrationDNSCheckToJSON,
+} from '../models/MigrationDNSCheck';
+import {
     type MigrationProgress,
     MigrationProgressFromJSON,
     MigrationProgressToJSON,
@@ -215,12 +220,12 @@ export interface MigrationsApiInterface {
      * @throws {RequiredError}
      * @memberof MigrationsApiInterface
      */
-    checkMigrationDNSRaw(requestParameters: CheckMigrationDNSRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>>;
+    checkMigrationDNSRaw(requestParameters: CheckMigrationDNSRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MigrationDNSCheck>>;
 
     /**
      * Check DNS readiness for cutover
      */
-    checkMigrationDNS(requestParameters: CheckMigrationDNSRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object>;
+    checkMigrationDNS(requestParameters: CheckMigrationDNSRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<MigrationDNSCheck>;
 
     /**
      * Creates request options for createMigration without sending the request
@@ -761,17 +766,17 @@ export class MigrationsApi extends runtime.BaseAPI implements MigrationsApiInter
     /**
      * Check DNS readiness for cutover
      */
-    async checkMigrationDNSRaw(requestParameters: CheckMigrationDNSRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
+    async checkMigrationDNSRaw(requestParameters: CheckMigrationDNSRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<MigrationDNSCheck>> {
         const requestOptions = await this.checkMigrationDNSRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse<any>(response);
+        return new runtime.JSONApiResponse(response, (jsonValue) => MigrationDNSCheckFromJSON(jsonValue));
     }
 
     /**
      * Check DNS readiness for cutover
      */
-    async checkMigrationDNS(requestParameters: CheckMigrationDNSRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
+    async checkMigrationDNS(requestParameters: CheckMigrationDNSRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<MigrationDNSCheck> {
         const response = await this.checkMigrationDNSRaw(requestParameters, initOverrides);
         return await response.value();
     }

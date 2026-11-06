@@ -67,6 +67,31 @@ export interface APIKey {
      * @memberof APIKey
      */
     createdAt: Date;
+    /**
+     * True for an lk_test_* key: the whole request path runs but a send never reaches the mail server and nothing counts against the account.
+     * @type {boolean}
+     * @memberof APIKey
+     */
+    test?: boolean;
+    /**
+     * When the key stops authenticating. Null means it does not expire,
+     * which is how every key behaved before expiry existed. Enforced at
+     * authentication, so the key fails the first request after this
+     * moment rather than whenever a sweep runs.
+     * 
+     * @type {Date}
+     * @memberof APIKey
+     */
+    expiresAt?: Date;
+    /**
+     * The successor issued by `POST /v1/api-keys/{id}/rotate`. Set on the
+     * PREDECESSOR, so you can see which key replaced this one while both
+     * still work through the overlap window.
+     * 
+     * @type {string}
+     * @memberof APIKey
+     */
+    rotatedTo?: string;
 }
 
 /**
@@ -100,6 +125,9 @@ export function APIKeyFromJSONTyped(json: any, ignoreDiscriminator: boolean): AP
         'lastUsedAt': json['last_used_at'] == null ? undefined : (new Date(json['last_used_at'])),
         'revokedAt': json['revoked_at'] == null ? undefined : (new Date(json['revoked_at'])),
         'createdAt': (new Date(json['created_at'])),
+        'test': json['test'] == null ? undefined : json['test'],
+        'expiresAt': json['expires_at'] == null ? undefined : (new Date(json['expires_at'])),
+        'rotatedTo': json['rotated_to'] == null ? undefined : json['rotated_to'],
     };
 }
 
@@ -122,6 +150,9 @@ export function APIKeyToJSONTyped(value?: APIKey | null, ignoreDiscriminator: bo
         'last_used_at': value['lastUsedAt'] == null ? value['lastUsedAt'] : value['lastUsedAt'].toISOString(),
         'revoked_at': value['revokedAt'] == null ? value['revokedAt'] : value['revokedAt'].toISOString(),
         'created_at': value['createdAt'].toISOString(),
+        'test': value['test'],
+        'expires_at': value['expiresAt'] == null ? value['expiresAt'] : value['expiresAt'].toISOString(),
+        'rotated_to': value['rotatedTo'],
     };
 }
 

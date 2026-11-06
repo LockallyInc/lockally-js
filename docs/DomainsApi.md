@@ -464,7 +464,7 @@ example().catch(console.error);
 
 ## listDomains
 
-> ListDomains200Response listDomains()
+> ListDomains200Response listDomains(sort, order)
 
 List domains
 
@@ -487,8 +487,15 @@ async function example() {
   });
   const api = new DomainsApi(config);
 
+  const body = {
+    // 'domain' | 'created_at' | 'verified_at' | Field to order by. This list holds tens of rows per account, so every column is offered and none needs an index. (optional)
+    sort: sort_example,
+    // 'asc' | 'desc' | Defaults to desc for the default field and asc for any other. Always tie-broken on id, so the order is total. (optional)
+    order: order_example,
+  } satisfies ListDomainsRequest;
+
   try {
-    const data = await api.listDomains();
+    const data = await api.listDomains(body);
     console.log(data);
   } catch (error) {
     console.error(error);
@@ -501,7 +508,11 @@ example().catch(console.error);
 
 ### Parameters
 
-This endpoint does not need any parameter.
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **sort** | `domain`, `created_at`, `verified_at` | Field to order by. This list holds tens of rows per account, so every column is offered and none needs an index. | [Optional] [Defaults to `&#39;created_at&#39;`] [Enum: domain, created_at, verified_at] |
+| **order** | `asc`, `desc` | Defaults to desc for the default field and asc for any other. Always tie-broken on id, so the order is total. | [Optional] [Defaults to `undefined`] [Enum: asc, desc] |
 
 ### Return type
 

@@ -24,7 +24,7 @@ export interface CreateEncryptionRecoveryRequest {
      * @type {string}
      * @memberof CreateEncryptionRecoveryRequest
      */
-    mailboxEmail: string;
+    mailboxEmail?: string;
     /**
      * 
      * @type {string}
@@ -37,7 +37,6 @@ export interface CreateEncryptionRecoveryRequest {
  * Check if a given object implements the CreateEncryptionRecoveryRequest interface.
  */
 export function instanceOfCreateEncryptionRecoveryRequest(value: object): value is CreateEncryptionRecoveryRequest {
-    if ((!('mailboxEmail' in value) && !('mailbox_email' in value)) || (value['mailboxEmail'] === undefined && value['mailbox_email'] === undefined)) return false;
     if ((!('recoveryBlob' in value) && !('recovery_blob' in value)) || (value['recoveryBlob'] === undefined && value['recovery_blob'] === undefined)) return false;
     return true;
 }
@@ -52,7 +51,7 @@ export function CreateEncryptionRecoveryRequestFromJSONTyped(json: any, ignoreDi
     }
     return {
         
-        'mailboxEmail': json['mailbox_email'],
+        'mailboxEmail': json['mailbox_email'] == null ? undefined : json['mailbox_email'],
         'recoveryBlob': json['recovery_blob'],
     };
 }

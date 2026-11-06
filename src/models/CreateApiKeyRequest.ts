@@ -40,6 +40,15 @@ export interface CreateApiKeyRequest {
      * @memberof CreateApiKeyRequest
      */
     test?: boolean;
+    /**
+     * Optional. When the key stops authenticating. Omit it for a
+     * key that does not expire. Must be in the future: an expiry
+     * already past would mint a key that fails its first request.
+     * 
+     * @type {Date}
+     * @memberof CreateApiKeyRequest
+     */
+    expiresAt?: Date;
 }
 
 
@@ -92,6 +101,7 @@ export function CreateApiKeyRequestFromJSONTyped(json: any, ignoreDiscriminator:
         'label': json['label'],
         'scopes': json['scopes'],
         'test': json['test'] == null ? undefined : json['test'],
+        'expiresAt': json['expires_at'] == null ? undefined : (new Date(json['expires_at'])),
     };
 }
 
@@ -109,6 +119,7 @@ export function CreateApiKeyRequestToJSONTyped(value?: CreateApiKeyRequest | nul
         'label': value['label'],
         'scopes': value['scopes'],
         'test': value['test'],
+        'expires_at': value['expiresAt'] == null ? value['expiresAt'] : value['expiresAt'].toISOString(),
     };
 }
 

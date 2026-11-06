@@ -14,6 +14,16 @@
 
 import * as runtime from '../runtime';
 import {
+    type BulkUpsertExternalContacts200Response,
+    BulkUpsertExternalContacts200ResponseFromJSON,
+    BulkUpsertExternalContacts200ResponseToJSON,
+} from '../models/BulkUpsertExternalContacts200Response';
+import {
+    type BulkUpsertExternalContactsRequest,
+    BulkUpsertExternalContactsRequestFromJSON,
+    BulkUpsertExternalContactsRequestToJSON,
+} from '../models/BulkUpsertExternalContactsRequest';
+import {
     type Contact,
     ContactFromJSON,
     ContactToJSON,
@@ -23,6 +33,11 @@ import {
     CreateContactRequestFromJSON,
     CreateContactRequestToJSON,
 } from '../models/CreateContactRequest';
+import {
+    type ExternalContactInput,
+    ExternalContactInputFromJSON,
+    ExternalContactInputToJSON,
+} from '../models/ExternalContactInput';
 import {
     type GetContactLists200Response,
     GetContactLists200ResponseFromJSON,
@@ -44,6 +59,11 @@ import {
     UpdateContactRequestToJSON,
 } from '../models/UpdateContactRequest';
 
+export interface BulkUpsertExternalContactsOperationRequest {
+    system: string;
+    bulkUpsertExternalContactsRequest: BulkUpsertExternalContactsRequest;
+}
+
 export interface CreateContactOperationRequest {
     createContactRequest: CreateContactRequest;
 }
@@ -52,12 +72,22 @@ export interface DeleteContactRequest {
     id: string;
 }
 
+export interface DeleteExternalContactRequest {
+    system: string;
+    externalId: string;
+}
+
 export interface GetContactRequest {
     id: string;
 }
 
 export interface GetContactListsRequest {
     id: string;
+}
+
+export interface GetExternalContactRequest {
+    system: string;
+    externalId: string;
 }
 
 export interface ListContactsRequest {
@@ -73,6 +103,12 @@ export interface UpdateContactOperationRequest {
     updateContactRequest: UpdateContactRequest;
 }
 
+export interface UpsertExternalContactRequest {
+    system: string;
+    externalId: string;
+    externalContactInput: ExternalContactInput;
+}
+
 /**
  * ContactsApi - interface
  * 
@@ -80,6 +116,32 @@ export interface UpdateContactOperationRequest {
  * @interface ContactsApiInterface
  */
 export interface ContactsApiInterface {
+    /**
+     * Creates request options for bulkUpsertExternalContacts without sending the request
+     * @param {string} system 
+     * @param {BulkUpsertExternalContactsRequest} bulkUpsertExternalContactsRequest 
+     * @throws {RequiredError}
+     * @memberof ContactsApiInterface
+     */
+    bulkUpsertExternalContactsRequestOpts(requestParameters: BulkUpsertExternalContactsOperationRequest): Promise<runtime.RequestOpts>;
+
+    /**
+     * For a sync. Each row stands alone: a bad row is reported in `results` with its index and the rest are stored, so the response is 200 whenever the request itself is well formed. Read `failed` and `results`. Two rows with the same `external_id` in one request are refused (the later one), because which is current cannot be known. Rerunning the same payload updates rather than duplicates.
+     * @summary Create or update up to 500 contacts by their ids in another system
+     * @param {string} system 
+     * @param {BulkUpsertExternalContactsRequest} bulkUpsertExternalContactsRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContactsApiInterface
+     */
+    bulkUpsertExternalContactsRaw(requestParameters: BulkUpsertExternalContactsOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<BulkUpsertExternalContacts200Response>>;
+
+    /**
+     * For a sync. Each row stands alone: a bad row is reported in `results` with its index and the rest are stored, so the response is 200 whenever the request itself is well formed. Read `failed` and `results`. Two rows with the same `external_id` in one request are refused (the later one), because which is current cannot be known. Rerunning the same payload updates rather than duplicates.
+     * Create or update up to 500 contacts by their ids in another system
+     */
+    bulkUpsertExternalContacts(requestParameters: BulkUpsertExternalContactsOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<BulkUpsertExternalContacts200Response>;
+
     /**
      * Creates request options for createContact without sending the request
      * @param {CreateContactRequest} createContactRequest 
@@ -127,6 +189,31 @@ export interface ContactsApiInterface {
     deleteContact(requestParameters: DeleteContactRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
 
     /**
+     * Creates request options for deleteExternalContact without sending the request
+     * @param {string} system Your label for the system the record comes from, for example &#x60;salesforce&#x60;, &#x60;hubspot&#x60; or &#x60;odoo&#x60;. 1 to 64 characters: lowercase letters, digits, dot, underscore or hyphen (upper case is folded).
+     * @param {string} externalId The record\&#39;s id in that system, kept exactly as given (case matters). 1 to 255 characters, no spaces. URL-encode it.
+     * @throws {RequiredError}
+     * @memberof ContactsApiInterface
+     */
+    deleteExternalContactRequestOpts(requestParameters: DeleteExternalContactRequest): Promise<runtime.RequestOpts>;
+
+    /**
+     * 
+     * @summary Delete a contact by its id in another system
+     * @param {string} system Your label for the system the record comes from, for example &#x60;salesforce&#x60;, &#x60;hubspot&#x60; or &#x60;odoo&#x60;. 1 to 64 characters: lowercase letters, digits, dot, underscore or hyphen (upper case is folded).
+     * @param {string} externalId The record\&#39;s id in that system, kept exactly as given (case matters). 1 to 255 characters, no spaces. URL-encode it.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContactsApiInterface
+     */
+    deleteExternalContactRaw(requestParameters: DeleteExternalContactRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>>;
+
+    /**
+     * Delete a contact by its id in another system
+     */
+    deleteExternalContact(requestParameters: DeleteExternalContactRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
+
+    /**
      * Creates request options for getContact without sending the request
      * @param {string} id 
      * @throws {RequiredError}
@@ -171,6 +258,31 @@ export interface ContactsApiInterface {
      * Get lists a contact belongs to
      */
     getContactLists(requestParameters: GetContactListsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetContactLists200Response>;
+
+    /**
+     * Creates request options for getExternalContact without sending the request
+     * @param {string} system Your label for the system the record comes from, for example &#x60;salesforce&#x60;, &#x60;hubspot&#x60; or &#x60;odoo&#x60;. 1 to 64 characters: lowercase letters, digits, dot, underscore or hyphen (upper case is folded).
+     * @param {string} externalId The record\&#39;s id in that system, kept exactly as given (case matters). 1 to 255 characters, no spaces. URL-encode it.
+     * @throws {RequiredError}
+     * @memberof ContactsApiInterface
+     */
+    getExternalContactRequestOpts(requestParameters: GetExternalContactRequest): Promise<runtime.RequestOpts>;
+
+    /**
+     * 
+     * @summary Get a contact by its id in another system
+     * @param {string} system Your label for the system the record comes from, for example &#x60;salesforce&#x60;, &#x60;hubspot&#x60; or &#x60;odoo&#x60;. 1 to 64 characters: lowercase letters, digits, dot, underscore or hyphen (upper case is folded).
+     * @param {string} externalId The record\&#39;s id in that system, kept exactly as given (case matters). 1 to 255 characters, no spaces. URL-encode it.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContactsApiInterface
+     */
+    getExternalContactRaw(requestParameters: GetExternalContactRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Contact>>;
+
+    /**
+     * Get a contact by its id in another system
+     */
+    getExternalContact(requestParameters: GetExternalContactRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Contact>;
 
     /**
      * Creates request options for listContacts without sending the request
@@ -228,12 +340,105 @@ export interface ContactsApiInterface {
      */
     updateContact(requestParameters: UpdateContactOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Contact>;
 
+    /**
+     * Creates request options for upsertExternalContact without sending the request
+     * @param {string} system Your label for the system the record comes from, for example &#x60;salesforce&#x60;, &#x60;hubspot&#x60; or &#x60;odoo&#x60;. 1 to 64 characters: lowercase letters, digits, dot, underscore or hyphen (upper case is folded).
+     * @param {string} externalId The record\&#39;s id in that system, kept exactly as given (case matters). 1 to 255 characters, no spaces. URL-encode it.
+     * @param {ExternalContactInput} externalContactInput 
+     * @throws {RequiredError}
+     * @memberof ContactsApiInterface
+     */
+    upsertExternalContactRequestOpts(requestParameters: UpsertExternalContactRequest): Promise<runtime.RequestOpts>;
+
+    /**
+     * Idempotent: the path is the identity, so sending the same request twice cannot create a second contact, and you never need to store our id. Returns 201 when the contact was created and 200 when it already existed. The body is the full representation: a field you leave out is cleared. Email is an ordinary attribute, not a key, so changing it updates the same contact. `mailboxes:write` is also accepted.
+     * @summary Create or update a contact by its id in another system
+     * @param {string} system Your label for the system the record comes from, for example &#x60;salesforce&#x60;, &#x60;hubspot&#x60; or &#x60;odoo&#x60;. 1 to 64 characters: lowercase letters, digits, dot, underscore or hyphen (upper case is folded).
+     * @param {string} externalId The record\&#39;s id in that system, kept exactly as given (case matters). 1 to 255 characters, no spaces. URL-encode it.
+     * @param {ExternalContactInput} externalContactInput 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ContactsApiInterface
+     */
+    upsertExternalContactRaw(requestParameters: UpsertExternalContactRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Contact>>;
+
+    /**
+     * Idempotent: the path is the identity, so sending the same request twice cannot create a second contact, and you never need to store our id. Returns 201 when the contact was created and 200 when it already existed. The body is the full representation: a field you leave out is cleared. Email is an ordinary attribute, not a key, so changing it updates the same contact. `mailboxes:write` is also accepted.
+     * Create or update a contact by its id in another system
+     */
+    upsertExternalContact(requestParameters: UpsertExternalContactRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Contact>;
+
 }
 
 /**
  * 
  */
 export class ContactsApi extends runtime.BaseAPI implements ContactsApiInterface {
+
+    /**
+     * Creates request options for bulkUpsertExternalContacts without sending the request
+     */
+    async bulkUpsertExternalContactsRequestOpts(requestParameters: BulkUpsertExternalContactsOperationRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['system'] == null) {
+            throw new runtime.RequiredError(
+                'system',
+                'Required parameter "system" was null or undefined when calling bulkUpsertExternalContacts().'
+            );
+        }
+
+        if (requestParameters['bulkUpsertExternalContactsRequest'] == null) {
+            throw new runtime.RequiredError(
+                'bulkUpsertExternalContactsRequest',
+                'Required parameter "bulkUpsertExternalContactsRequest" was null or undefined when calling bulkUpsertExternalContacts().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("bearerAuth", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/contacts/external/{system}`;
+        urlPath = urlPath.replace('{system}', encodeURIComponent(String(requestParameters['system'])));
+
+        return {
+            path: urlPath,
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: BulkUpsertExternalContactsRequestToJSON(requestParameters['bulkUpsertExternalContactsRequest']),
+        };
+    }
+
+    /**
+     * For a sync. Each row stands alone: a bad row is reported in `results` with its index and the rest are stored, so the response is 200 whenever the request itself is well formed. Read `failed` and `results`. Two rows with the same `external_id` in one request are refused (the later one), because which is current cannot be known. Rerunning the same payload updates rather than duplicates.
+     * Create or update up to 500 contacts by their ids in another system
+     */
+    async bulkUpsertExternalContactsRaw(requestParameters: BulkUpsertExternalContactsOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<BulkUpsertExternalContacts200Response>> {
+        const requestOptions = await this.bulkUpsertExternalContactsRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => BulkUpsertExternalContacts200ResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * For a sync. Each row stands alone: a bad row is reported in `results` with its index and the rest are stored, so the response is 200 whenever the request itself is well formed. Read `failed` and `results`. Two rows with the same `external_id` in one request are refused (the later one), because which is current cannot be known. Rerunning the same payload updates rather than duplicates.
+     * Create or update up to 500 contacts by their ids in another system
+     */
+    async bulkUpsertExternalContacts(requestParameters: BulkUpsertExternalContactsOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<BulkUpsertExternalContacts200Response> {
+        const response = await this.bulkUpsertExternalContactsRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
 
     /**
      * Creates request options for createContact without sending the request
@@ -343,6 +548,66 @@ export class ContactsApi extends runtime.BaseAPI implements ContactsApiInterface
     }
 
     /**
+     * Creates request options for deleteExternalContact without sending the request
+     */
+    async deleteExternalContactRequestOpts(requestParameters: DeleteExternalContactRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['system'] == null) {
+            throw new runtime.RequiredError(
+                'system',
+                'Required parameter "system" was null or undefined when calling deleteExternalContact().'
+            );
+        }
+
+        if (requestParameters['externalId'] == null) {
+            throw new runtime.RequiredError(
+                'externalId',
+                'Required parameter "externalId" was null or undefined when calling deleteExternalContact().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("bearerAuth", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/contacts/external/{system}/{external_id}`;
+        urlPath = urlPath.replace('{system}', encodeURIComponent(String(requestParameters['system'])));
+        urlPath = urlPath.replace('{external_id}', encodeURIComponent(String(requestParameters['externalId'])));
+
+        return {
+            path: urlPath,
+            method: 'DELETE',
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * Delete a contact by its id in another system
+     */
+    async deleteExternalContactRaw(requestParameters: DeleteExternalContactRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+        const requestOptions = await this.deleteExternalContactRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.VoidApiResponse(response);
+    }
+
+    /**
+     * Delete a contact by its id in another system
+     */
+    async deleteExternalContact(requestParameters: DeleteExternalContactRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.deleteExternalContactRaw(requestParameters, initOverrides);
+    }
+
+    /**
      * Creates request options for getContact without sending the request
      */
     async getContactRequestOpts(requestParameters: GetContactRequest): Promise<runtime.RequestOpts> {
@@ -445,6 +710,67 @@ export class ContactsApi extends runtime.BaseAPI implements ContactsApiInterface
      */
     async getContactLists(requestParameters: GetContactListsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetContactLists200Response> {
         const response = await this.getContactListsRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for getExternalContact without sending the request
+     */
+    async getExternalContactRequestOpts(requestParameters: GetExternalContactRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['system'] == null) {
+            throw new runtime.RequiredError(
+                'system',
+                'Required parameter "system" was null or undefined when calling getExternalContact().'
+            );
+        }
+
+        if (requestParameters['externalId'] == null) {
+            throw new runtime.RequiredError(
+                'externalId',
+                'Required parameter "externalId" was null or undefined when calling getExternalContact().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("bearerAuth", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/contacts/external/{system}/{external_id}`;
+        urlPath = urlPath.replace('{system}', encodeURIComponent(String(requestParameters['system'])));
+        urlPath = urlPath.replace('{external_id}', encodeURIComponent(String(requestParameters['externalId'])));
+
+        return {
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * Get a contact by its id in another system
+     */
+    async getExternalContactRaw(requestParameters: GetExternalContactRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Contact>> {
+        const requestOptions = await this.getExternalContactRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ContactFromJSON(jsonValue));
+    }
+
+    /**
+     * Get a contact by its id in another system
+     */
+    async getExternalContact(requestParameters: GetExternalContactRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Contact> {
+        const response = await this.getExternalContactRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -573,6 +899,79 @@ export class ContactsApi extends runtime.BaseAPI implements ContactsApiInterface
      */
     async updateContact(requestParameters: UpdateContactOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Contact> {
         const response = await this.updateContactRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for upsertExternalContact without sending the request
+     */
+    async upsertExternalContactRequestOpts(requestParameters: UpsertExternalContactRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['system'] == null) {
+            throw new runtime.RequiredError(
+                'system',
+                'Required parameter "system" was null or undefined when calling upsertExternalContact().'
+            );
+        }
+
+        if (requestParameters['externalId'] == null) {
+            throw new runtime.RequiredError(
+                'externalId',
+                'Required parameter "externalId" was null or undefined when calling upsertExternalContact().'
+            );
+        }
+
+        if (requestParameters['externalContactInput'] == null) {
+            throw new runtime.RequiredError(
+                'externalContactInput',
+                'Required parameter "externalContactInput" was null or undefined when calling upsertExternalContact().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("bearerAuth", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/contacts/external/{system}/{external_id}`;
+        urlPath = urlPath.replace('{system}', encodeURIComponent(String(requestParameters['system'])));
+        urlPath = urlPath.replace('{external_id}', encodeURIComponent(String(requestParameters['externalId'])));
+
+        return {
+            path: urlPath,
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: ExternalContactInputToJSON(requestParameters['externalContactInput']),
+        };
+    }
+
+    /**
+     * Idempotent: the path is the identity, so sending the same request twice cannot create a second contact, and you never need to store our id. Returns 201 when the contact was created and 200 when it already existed. The body is the full representation: a field you leave out is cleared. Email is an ordinary attribute, not a key, so changing it updates the same contact. `mailboxes:write` is also accepted.
+     * Create or update a contact by its id in another system
+     */
+    async upsertExternalContactRaw(requestParameters: UpsertExternalContactRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Contact>> {
+        const requestOptions = await this.upsertExternalContactRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => ContactFromJSON(jsonValue));
+    }
+
+    /**
+     * Idempotent: the path is the identity, so sending the same request twice cannot create a second contact, and you never need to store our id. Returns 201 when the contact was created and 200 when it already existed. The body is the full representation: a field you leave out is cleared. Email is an ordinary attribute, not a key, so changing it updates the same contact. `mailboxes:write` is also accepted.
+     * Create or update a contact by its id in another system
+     */
+    async upsertExternalContact(requestParameters: UpsertExternalContactRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Contact> {
+        const response = await this.upsertExternalContactRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

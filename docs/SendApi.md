@@ -160,7 +160,7 @@ example().catch(console.error);
 
 ## getMessageStats
 
-> MessageStats getMessageStats(from, to, domain)
+> MessageStats getMessageStats(from, to, domain, tag)
 
 Aggregate delivery stats
 
@@ -190,6 +190,8 @@ async function example() {
     to: 2013-10-20T19:20:30+01:00,
     // string | Filter by sender domain. (optional)
     domain: domain_example,
+    // string | Group the window by the sender\'s own tags: one tag, or a comma-separated set meaning ANY. Case-insensitive. This is the dimension that tells a transactional stream from a notification one. (optional)
+    tag: tag_example,
   } satisfies GetMessageStatsRequest;
 
   try {
@@ -212,6 +214,7 @@ example().catch(console.error);
 | **from** | `Date` | Window start (default 7 days ago). | [Optional] [Defaults to `undefined`] |
 | **to** | `Date` | Window end (default now). | [Optional] [Defaults to `undefined`] |
 | **domain** | `string` | Filter by sender domain. | [Optional] [Defaults to `undefined`] |
+| **tag** | `string` | Group the window by the sender\&#39;s own tags: one tag, or a comma-separated set meaning ANY. Case-insensitive. This is the dimension that tells a transactional stream from a notification one. | [Optional] [Defaults to `undefined`] |
 
 ### Return type
 
@@ -239,7 +242,7 @@ example().catch(console.error);
 
 ## listMessages
 
-> ListMessages200Response listMessages(status, sender, q, since, cursor, limit)
+> ListMessages200Response listMessages(status, sender, tag, q, since, cursor, limit, sort, order)
 
 List outbound messages
 
@@ -267,6 +270,8 @@ async function example() {
     status: status_example,
     // string | Exact match against the `from` mailbox. (optional)
     sender: sender_example,
+    // string | Filter to messages carrying any of these tags. One tag, or a comma-separated set meaning ANY. Case-insensitive: the value is normalised the same way tags are on write. (optional)
+    tag: tag_example,
     // string | Free-text search across subject + sender. (optional)
     q: q_example,
     // Date | Only messages queued at or after this RFC 3339 instant. (optional)
@@ -275,6 +280,10 @@ async function example() {
     cursor: cursor_example,
     // number (optional)
     limit: 56,
+    // 'queued_at' | 'updated_at' | Field to order by. Only indexed columns are offered: an unindexed sort on this table is a full scan of the account\'s send history. status and sender are filters instead. (optional)
+    sort: sort_example,
+    // 'asc' | 'desc' | Defaults to desc for the default field and asc for any other. The order is always made total by a tie-break on id, so paging cannot repeat or skip a row that shares a timestamp. cursor encodes queued_at, so combining it with another sort is a 400 rather than a wrong page. (optional)
+    order: order_example,
   } satisfies ListMessagesRequest;
 
   try {
@@ -296,10 +305,13 @@ example().catch(console.error);
 |------------- | ------------- | ------------- | -------------|
 | **status** | `queued`, `sending`, `delivered`, `bounced`, `deferred`, `complaint` |  | [Optional] [Defaults to `undefined`] [Enum: queued, sending, delivered, bounced, deferred, complaint] |
 | **sender** | `string` | Exact match against the &#x60;from&#x60; mailbox. | [Optional] [Defaults to `undefined`] |
+| **tag** | `string` | Filter to messages carrying any of these tags. One tag, or a comma-separated set meaning ANY. Case-insensitive: the value is normalised the same way tags are on write. | [Optional] [Defaults to `undefined`] |
 | **q** | `string` | Free-text search across subject + sender. | [Optional] [Defaults to `undefined`] |
 | **since** | `Date` | Only messages queued at or after this RFC 3339 instant. | [Optional] [Defaults to `undefined`] |
 | **cursor** | `string` | queued_at of the prior page boundary. Pass back the &#x60;next_cursor&#x60; returned by the previous call. | [Optional] [Defaults to `undefined`] |
 | **limit** | `number` |  | [Optional] [Defaults to `50`] |
+| **sort** | `queued_at`, `updated_at` | Field to order by. Only indexed columns are offered: an unindexed sort on this table is a full scan of the account\&#39;s send history. status and sender are filters instead. | [Optional] [Defaults to `&#39;queued_at&#39;`] [Enum: queued_at, updated_at] |
+| **order** | `asc`, `desc` | Defaults to desc for the default field and asc for any other. The order is always made total by a tie-break on id, so paging cannot repeat or skip a row that shares a timestamp. cursor encodes queued_at, so combining it with another sort is a 400 rather than a wrong page. | [Optional] [Defaults to `undefined`] [Enum: asc, desc] |
 
 ### Return type
 

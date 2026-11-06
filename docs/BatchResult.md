@@ -11,6 +11,7 @@ Name | Type
 `messageId` | string
 `status` | string
 `error` | string
+`warning` | string
 
 ## Example
 
@@ -24,6 +25,7 @@ const example = {
   "messageId": null,
   "status": null,
   "error": null,
+  "warning": null,
 } satisfies BatchResult
 
 console.log(example)

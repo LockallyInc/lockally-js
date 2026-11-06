@@ -14,6 +14,9 @@ Name | Type
 `lastUsedAt` | Date
 `revokedAt` | Date
 `createdAt` | Date
+`test` | boolean
+`expiresAt` | Date
+`rotatedTo` | string
 `secret` | string
 
 ## Example
@@ -31,6 +34,9 @@ const example = {
   "lastUsedAt": null,
   "revokedAt": null,
   "createdAt": null,
+  "test": null,
+  "expiresAt": null,
+  "rotatedTo": null,
   "secret": lk_live_fbl73bhj_sfvqy7y757cnvu33bgqdpyrrhq3tyyf3,
 } satisfies CreateApiKey201Response
 

@@ -71,15 +71,19 @@ export interface GetMessageStatsRequest {
     from?: Date;
     to?: Date;
     domain?: string;
+    tag?: string;
 }
 
 export interface ListMessagesRequest {
     status?: ListMessagesStatusEnum;
     sender?: string;
+    tag?: string;
     q?: string;
     since?: Date;
     cursor?: string;
     limit?: number;
+    sort?: ListMessagesSortEnum;
+    order?: ListMessagesOrderEnum;
 }
 
 export interface SendEmailOperationRequest {
@@ -151,6 +155,7 @@ export interface SendApiInterface {
      * @param {Date} [from] Window start (default 7 days ago).
      * @param {Date} [to] Window end (default now).
      * @param {string} [domain] Filter by sender domain.
+     * @param {string} [tag] Group the window by the sender\&#39;s own tags: one tag, or a comma-separated set meaning ANY. Case-insensitive. This is the dimension that tells a transactional stream from a notification one.
      * @throws {RequiredError}
      * @memberof SendApiInterface
      */
@@ -162,6 +167,7 @@ export interface SendApiInterface {
      * @param {Date} [from] Window start (default 7 days ago).
      * @param {Date} [to] Window end (default now).
      * @param {string} [domain] Filter by sender domain.
+     * @param {string} [tag] Group the window by the sender\&#39;s own tags: one tag, or a comma-separated set meaning ANY. Case-insensitive. This is the dimension that tells a transactional stream from a notification one.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof SendApiInterface
@@ -178,10 +184,13 @@ export interface SendApiInterface {
      * Creates request options for listMessages without sending the request
      * @param {'queued' | 'sending' | 'delivered' | 'bounced' | 'deferred' | 'complaint'} [status] 
      * @param {string} [sender] Exact match against the &#x60;from&#x60; mailbox.
+     * @param {string} [tag] Filter to messages carrying any of these tags. One tag, or a comma-separated set meaning ANY. Case-insensitive: the value is normalised the same way tags are on write.
      * @param {string} [q] Free-text search across subject + sender.
      * @param {Date} [since] Only messages queued at or after this RFC 3339 instant.
      * @param {string} [cursor] queued_at of the prior page boundary. Pass back the &#x60;next_cursor&#x60; returned by the previous call.
      * @param {number} [limit] 
+     * @param {'queued_at' | 'updated_at'} [sort] Field to order by. Only indexed columns are offered: an unindexed sort on this table is a full scan of the account\&#39;s send history. status and sender are filters instead.
+     * @param {'asc' | 'desc'} [order] Defaults to desc for the default field and asc for any other. The order is always made total by a tie-break on id, so paging cannot repeat or skip a row that shares a timestamp. cursor encodes queued_at, so combining it with another sort is a 400 rather than a wrong page.
      * @throws {RequiredError}
      * @memberof SendApiInterface
      */
@@ -192,10 +201,13 @@ export interface SendApiInterface {
      * @summary List outbound messages
      * @param {'queued' | 'sending' | 'delivered' | 'bounced' | 'deferred' | 'complaint'} [status] 
      * @param {string} [sender] Exact match against the &#x60;from&#x60; mailbox.
+     * @param {string} [tag] Filter to messages carrying any of these tags. One tag, or a comma-separated set meaning ANY. Case-insensitive: the value is normalised the same way tags are on write.
      * @param {string} [q] Free-text search across subject + sender.
      * @param {Date} [since] Only messages queued at or after this RFC 3339 instant.
      * @param {string} [cursor] queued_at of the prior page boundary. Pass back the &#x60;next_cursor&#x60; returned by the previous call.
      * @param {number} [limit] 
+     * @param {'queued_at' | 'updated_at'} [sort] Field to order by. Only indexed columns are offered: an unindexed sort on this table is a full scan of the account\&#39;s send history. status and sender are filters instead.
+     * @param {'asc' | 'desc'} [order] Defaults to desc for the default field and asc for any other. The order is always made total by a tie-break on id, so paging cannot repeat or skip a row that shares a timestamp. cursor encodes queued_at, so combining it with another sort is a 400 rather than a wrong page.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof SendApiInterface
@@ -392,6 +404,10 @@ export class SendApi extends runtime.BaseAPI implements SendApiInterface {
             queryParameters['domain'] = requestParameters['domain'];
         }
 
+        if (requestParameters['tag'] != null) {
+            queryParameters['tag'] = requestParameters['tag'];
+        }
+
         const headerParameters: runtime.HTTPHeaders = {};
 
         if (this.configuration && this.configuration.accessToken) {
@@ -447,6 +463,10 @@ export class SendApi extends runtime.BaseAPI implements SendApiInterface {
             queryParameters['sender'] = requestParameters['sender'];
         }
 
+        if (requestParameters['tag'] != null) {
+            queryParameters['tag'] = requestParameters['tag'];
+        }
+
         if (requestParameters['q'] != null) {
             queryParameters['q'] = requestParameters['q'];
         }
@@ -461,6 +481,14 @@ export class SendApi extends runtime.BaseAPI implements SendApiInterface {
 
         if (requestParameters['limit'] != null) {
             queryParameters['limit'] = requestParameters['limit'];
+        }
+
+        if (requestParameters['sort'] != null) {
+            queryParameters['sort'] = requestParameters['sort'];
+        }
+
+        if (requestParameters['order'] != null) {
+            queryParameters['order'] = requestParameters['order'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -654,3 +682,19 @@ export const ListMessagesStatusEnum = {
     Complaint: 'complaint'
 } as const;
 export type ListMessagesStatusEnum = typeof ListMessagesStatusEnum[keyof typeof ListMessagesStatusEnum];
+/**
+ * @export
+ */
+export const ListMessagesSortEnum = {
+    QueuedAt: 'queued_at',
+    UpdatedAt: 'updated_at'
+} as const;
+export type ListMessagesSortEnum = typeof ListMessagesSortEnum[keyof typeof ListMessagesSortEnum];
+/**
+ * @export
+ */
+export const ListMessagesOrderEnum = {
+    Asc: 'asc',
+    Desc: 'desc'
+} as const;
+export type ListMessagesOrderEnum = typeof ListMessagesOrderEnum[keyof typeof ListMessagesOrderEnum];

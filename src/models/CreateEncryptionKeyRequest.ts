@@ -24,7 +24,7 @@ export interface CreateEncryptionKeyRequest {
      * @type {string}
      * @memberof CreateEncryptionKeyRequest
      */
-    mailboxEmail: string;
+    mailboxEmail?: string;
     /**
      * 
      * @type {string}
@@ -49,7 +49,6 @@ export interface CreateEncryptionKeyRequest {
  * Check if a given object implements the CreateEncryptionKeyRequest interface.
  */
 export function instanceOfCreateEncryptionKeyRequest(value: object): value is CreateEncryptionKeyRequest {
-    if ((!('mailboxEmail' in value) && !('mailbox_email' in value)) || (value['mailboxEmail'] === undefined && value['mailbox_email'] === undefined)) return false;
     if ((!('publicKey' in value) && !('public_key' in value)) || (value['publicKey'] === undefined && value['public_key'] === undefined)) return false;
     if ((!('encryptedPrivateKey' in value) && !('encrypted_private_key' in value)) || (value['encryptedPrivateKey'] === undefined && value['encrypted_private_key'] === undefined)) return false;
     return true;
@@ -65,7 +64,7 @@ export function CreateEncryptionKeyRequestFromJSONTyped(json: any, ignoreDiscrim
     }
     return {
         
-        'mailboxEmail': json['mailbox_email'],
+        'mailboxEmail': json['mailbox_email'] == null ? undefined : json['mailbox_email'],
         'publicKey': json['public_key'],
         'encryptedPrivateKey': json['encrypted_private_key'],
         'kdfParams': json['kdf_params'] == null ? undefined : json['kdf_params'],

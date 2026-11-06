@@ -8,7 +8,8 @@ All URIs are relative to *https://api.lockally.com*
 | [**createEncryptionKey**](EncryptionApi.md#createencryptionkeyoperation) | **POST** /v1/encryption/keys | Upload an encryption key pair |
 | [**createEncryptionRecovery**](EncryptionApi.md#createencryptionrecoveryoperation) | **POST** /v1/encryption/recovery | Store an encryption recovery blob |
 | [**getEncryptionKey**](EncryptionApi.md#getencryptionkey) | **GET** /v1/encryption/keys/{email} | Get encryption key for a mailbox |
-| [**rotateEncryptionKey**](EncryptionApi.md#rotateencryptionkeyoperation) | **POST** /v1/encryption/keys/rotate | Rotate an encryption key |
+| [**getEncryptionStatus**](EncryptionApi.md#getencryptionstatus) | **GET** /v1/encryption/status | End-to-end encryption status for the workspace |
+| [**rotateEncryptionKey**](EncryptionApi.md#rotateencryptionkeyoperation) | **POST** /v1/encryption/keys/rotate | Re-seal an encryption key under a new password |
 
 
 
@@ -90,6 +91,8 @@ example().catch(console.error);
 
 Upload an encryption key pair
 
+Only the mailbox\&#39;s own webmail session may call this; an API key is refused with 403. The private key is sealed under that mailbox\&#39;s password, which an administrator never has. &#x60;mailbox_email&#x60;, if sent, must be the caller\&#39;s own mailbox. A mailbox that already has a key is starting over: the old key is kept inactive, not destroyed, and the new one starts without a recovery code.
+
 ### Example
 
 ```ts
@@ -161,6 +164,8 @@ example().catch(console.error);
 > createEncryptionRecovery(createEncryptionRecoveryRequest)
 
 Store an encryption recovery blob
+
+Only the mailbox\&#39;s own webmail session may call this; an API key is refused with 403. The private key is sealed under that mailbox\&#39;s password, which an administrator never has. &#x60;mailbox_email&#x60;, if sent, must be the caller\&#39;s own mailbox. The blob is the private key sealed under a recovery code the browser generated; the code itself is never sent. Replaces any earlier one.
 
 ### Example
 
@@ -234,6 +239,8 @@ example().catch(console.error);
 
 Get encryption key for a mailbox
 
+Anyone in the workspace gets the public key. The mailbox\&#39;s own webmail session also gets its sealed private key, its sealed recovery copy and the recovery state.
+
 ### Example
 
 ```ts
@@ -300,11 +307,78 @@ example().catch(console.error);
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
 
+## getEncryptionStatus
+
+> GetEncryptionStatus200Response getEncryptionStatus()
+
+End-to-end encryption status for the workspace
+
+For administrators: whether the add-on is on, and for each mailbox whether it has a key and a recovery code. Carries no key material.
+
+### Example
+
+```ts
+import {
+  Configuration,
+  EncryptionApi,
+} from 'lockally';
+import type { GetEncryptionStatusRequest } from 'lockally';
+
+async function example() {
+  console.log("🚀 Testing lockally SDK...");
+  const config = new Configuration({ 
+    // Configure HTTP bearer authorization: bearerAuth
+    accessToken: "YOUR BEARER TOKEN",
+  });
+  const api = new EncryptionApi(config);
+
+  try {
+    const data = await api.getEncryptionStatus();
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// Run the test
+example().catch(console.error);
+```
+
+### Parameters
+
+This endpoint does not need any parameter.
+
+### Return type
+
+[**GetEncryptionStatus200Response**](GetEncryptionStatus200Response.md)
+
+### Authorization
+
+[bearerAuth](../README.md#bearerAuth)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: `application/json`, `application/problem+json`
+
+
+### HTTP response details
+| Status code | Description | Response headers |
+|-------------|-------------|------------------|
+| **200** | Status |  -  |
+| **401** | Missing, malformed, or invalid API key. |  -  |
+| **403** | API key lacks the required scope. |  -  |
+
+[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
+
+
 ## rotateEncryptionKey
 
 > rotateEncryptionKey(rotateEncryptionKeyRequest)
 
-Rotate an encryption key
+Re-seal an encryption key under a new password
+
+Only the mailbox\&#39;s own webmail session may call this; an API key is refused with 403. The private key is sealed under that mailbox\&#39;s password, which an administrator never has. &#x60;mailbox_email&#x60;, if sent, must be the caller\&#39;s own mailbox. The key pair does not change, so every message stays readable.
 
 ### Example
 

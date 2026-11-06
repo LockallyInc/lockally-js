@@ -112,6 +112,72 @@ export interface SendEmailRequest {
      */
     sendAt?: Date;
     /**
+     * Arbitrary key/value you attach to this message and get back
+     * on every delivery webhook for it, so a send can be matched
+     * to your own records without a lookup table.
+     * 
+     * **It never leaves Lockally.** A custom entry in `headers`
+     * goes out on the wire to the recipient, which is why that is
+     * not a substitute: order ids and internal identifiers do not
+     * belong in a header the recipient can read.
+     * 
+     * At most 20 keys, keys at most 64 characters, values at most
+     * 512. **Over a limit is refused with a `400`, never
+     * truncated**: a silently shortened order id succeeds and then
+     * fails to match weeks later.
+     * 
+     * Not indexed and not filterable.
+     * 
+     * @type {{ [key: string]: string; }}
+     * @memberof SendEmailRequest
+     */
+    metadata?: { [key: string]: string; };
+    /**
+     * Labels that group this send for filtering and analytics:
+     * campaign, template, environment.
+     * 
+     * **Lowercased, trimmed and deduplicated on write**, so the
+     * grouping does not depend on every caller spelling them
+     * identically. `Campaign-X` is stored as `campaign-x`, and
+     * either spelling matches it in a filter.
+     * 
+     * At most 10 per message after deduplication, each at most 32
+     * characters. Over either is a `400` rather than a trimmed
+     * list: a send missing the tag it was tagged for is worse than
+     * a refusal.
+     * 
+     * Unlike `metadata`, tags ARE queryable: filter with
+     * `GET /v1/messages?tag=` and group with
+     * `GET /v1/messages/stats?tag=`.
+     * 
+     * @type {Array<string>}
+     * @memberof SendEmailRequest
+     */
+    tags?: Array<string>;
+    /**
+     * Override the account's open-tracking setting for this one
+     * send. Omit to inherit it.
+     * 
+     * Three states matter here: `true`, `false`, and absent. A
+     * transactional receipt can set `false` without the account
+     * turning tracking off for its marketing.
+     * 
+     * @type {boolean}
+     * @memberof SendEmailRequest
+     */
+    trackOpens?: boolean;
+    /**
+     * As `track_opens`, for click tracking. Click tracking
+     * rewrites `http(s)` links in the **HTML** part only: the
+     * plain-text part is never rewritten, because a visible
+     * redirect URL is what recipients complain about. A
+     * text-only send is therefore not click-tracked.
+     * 
+     * @type {boolean}
+     * @memberof SendEmailRequest
+     */
+    trackClicks?: boolean;
+    /**
      * 
      * @type {Array<SendEmailRequestAttachmentsInner>}
      * @memberof SendEmailRequest
@@ -152,6 +218,10 @@ export function SendEmailRequestFromJSONTyped(json: any, ignoreDiscriminator: bo
         'templateId': json['template_id'] == null ? undefined : json['template_id'],
         'variables': json['variables'] == null ? undefined : json['variables'],
         'sendAt': json['send_at'] == null ? undefined : (new Date(json['send_at'])),
+        'metadata': json['metadata'] == null ? undefined : json['metadata'],
+        'tags': json['tags'] == null ? undefined : json['tags'],
+        'trackOpens': json['track_opens'] == null ? undefined : json['track_opens'],
+        'trackClicks': json['track_clicks'] == null ? undefined : json['track_clicks'],
         'attachments': json['attachments'] == null ? undefined : ((json['attachments'] as Array<any>).map(SendEmailRequestAttachmentsInnerFromJSON)),
     };
 }
@@ -181,6 +251,10 @@ export function SendEmailRequestToJSONTyped(value?: SendEmailRequest | null, ign
         'template_id': value['templateId'],
         'variables': value['variables'],
         'send_at': value['sendAt'] == null ? value['sendAt'] : value['sendAt'].toISOString(),
+        'metadata': value['metadata'],
+        'tags': value['tags'],
+        'track_opens': value['trackOpens'],
+        'track_clicks': value['trackClicks'],
         'attachments': value['attachments'] == null ? undefined : ((value['attachments'] as Array<any>).map(SendEmailRequestAttachmentsInnerToJSON)),
     };
 }

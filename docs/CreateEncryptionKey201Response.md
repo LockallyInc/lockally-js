@@ -9,6 +9,7 @@ Name | Type
 `id` | string
 `mailboxId` | string
 `createdAt` | Date
+`replacedOld` | boolean
 
 ## Example
 
@@ -20,6 +21,7 @@ const example = {
   "id": null,
   "mailboxId": null,
   "createdAt": null,
+  "replacedOld": null,
 } satisfies CreateEncryptionKey201Response
 
 console.log(example)

@@ -24,7 +24,7 @@ export interface RotateEncryptionKeyRequest {
      * @type {string}
      * @memberof RotateEncryptionKeyRequest
      */
-    mailboxEmail: string;
+    mailboxEmail?: string;
     /**
      * 
      * @type {string}
@@ -43,7 +43,6 @@ export interface RotateEncryptionKeyRequest {
  * Check if a given object implements the RotateEncryptionKeyRequest interface.
  */
 export function instanceOfRotateEncryptionKeyRequest(value: object): value is RotateEncryptionKeyRequest {
-    if ((!('mailboxEmail' in value) && !('mailbox_email' in value)) || (value['mailboxEmail'] === undefined && value['mailbox_email'] === undefined)) return false;
     if ((!('encryptedPrivateKey' in value) && !('encrypted_private_key' in value)) || (value['encryptedPrivateKey'] === undefined && value['encrypted_private_key'] === undefined)) return false;
     return true;
 }
@@ -58,7 +57,7 @@ export function RotateEncryptionKeyRequestFromJSONTyped(json: any, ignoreDiscrim
     }
     return {
         
-        'mailboxEmail': json['mailbox_email'],
+        'mailboxEmail': json['mailbox_email'] == null ? undefined : json['mailbox_email'],
         'encryptedPrivateKey': json['encrypted_private_key'],
         'kdfParams': json['kdf_params'] == null ? undefined : json['kdf_params'],
     };

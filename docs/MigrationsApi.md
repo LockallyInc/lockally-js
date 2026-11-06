@@ -104,7 +104,7 @@ example().catch(console.error);
 
 ## checkMigrationDNS
 
-> object checkMigrationDNS(id)
+> MigrationDNSCheck checkMigrationDNS(id)
 
 Check DNS readiness for cutover
 
@@ -151,7 +151,7 @@ example().catch(console.error);
 
 ### Return type
 
-**object**
+[**MigrationDNSCheck**](MigrationDNSCheck.md)
 
 ### Authorization
 
@@ -167,6 +167,7 @@ example().catch(console.error);
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **200** | DNS readiness check results |  -  |
+| **400** | The id is not a UUID, or the migration has no mapped destination mailboxes to check. |  -  |
 | **401** | Missing, malformed, or invalid API key. |  -  |
 | **403** | API key lacks the required scope. |  -  |
 | **404** | Resource not found under the calling tenant. |  -  |

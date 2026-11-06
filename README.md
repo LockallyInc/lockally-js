@@ -9,7 +9,7 @@
 </p>
 <!-- /lockally-brand-header -->
 
-# lockally@0.3.3
+# lockally@0.4.0
 
 A TypeScript SDK client for the api.lockally.com API.
 
@@ -99,6 +99,8 @@ All URIs are relative to *https://api.lockally.com*
 *ApiKeysApi* | [**createApiKey**](docs/ApiKeysApi.md#createapikeyoperation) | **POST** /v1/api-keys | Create an API key
 *ApiKeysApi* | [**listApiKeys**](docs/ApiKeysApi.md#listapikeys) | **GET** /v1/api-keys | List API keys
 *ApiKeysApi* | [**revokeApiKey**](docs/ApiKeysApi.md#revokeapikey) | **DELETE** /v1/api-keys/{id} | Revoke an API key
+*ApiKeysApi* | [**rotateApiKey**](docs/ApiKeysApi.md#rotateapikeyoperation) | **POST** /v1/api-keys/{id}/rotate | Rotate an API key
+*ApiKeysApi* | [**updateApiKey**](docs/ApiKeysApi.md#updateapikeyoperation) | **PATCH** /v1/api-keys/{id} | Update an API key
 *BillingApi* | [**createBillingCheckout**](docs/BillingApi.md#createbillingcheckoutoperation) | **POST** /v1/billing/checkout | Create a plan checkout session
 *BillingApi* | [**createUnitsCheckout**](docs/BillingApi.md#createunitscheckoutoperation) | **POST** /v1/billing/units/checkout | Create a send-units checkout session
 *BillingApi* | [**getBilling**](docs/BillingApi.md#getbilling) | **GET** /v1/billing | Get billing status
@@ -131,12 +133,16 @@ All URIs are relative to *https://api.lockally.com*
 *ContactListsApi* | [**listContactLists**](docs/ContactListsApi.md#listcontactlists) | **GET** /v1/contact-lists | List contact lists
 *ContactListsApi* | [**removeContactListMember**](docs/ContactListsApi.md#removecontactlistmember) | **DELETE** /v1/contact-lists/{id}/members/{contactId} | Remove a member from a contact list
 *ContactListsApi* | [**updateContactList**](docs/ContactListsApi.md#updatecontactlistoperation) | **PATCH** /v1/contact-lists/{id} | Update a contact list
+*ContactsApi* | [**bulkUpsertExternalContacts**](docs/ContactsApi.md#bulkupsertexternalcontactsoperation) | **PUT** /v1/contacts/external/{system} | Create or update up to 500 contacts by their ids in another system
 *ContactsApi* | [**createContact**](docs/ContactsApi.md#createcontactoperation) | **POST** /v1/contacts | Create a contact
 *ContactsApi* | [**deleteContact**](docs/ContactsApi.md#deletecontact) | **DELETE** /v1/contacts/{id} | Delete a contact
+*ContactsApi* | [**deleteExternalContact**](docs/ContactsApi.md#deleteexternalcontact) | **DELETE** /v1/contacts/external/{system}/{external_id} | Delete a contact by its id in another system
 *ContactsApi* | [**getContact**](docs/ContactsApi.md#getcontact) | **GET** /v1/contacts/{id} | Get a contact
 *ContactsApi* | [**getContactLists**](docs/ContactsApi.md#getcontactlists) | **GET** /v1/contacts/{id}/lists | Get lists a contact belongs to
+*ContactsApi* | [**getExternalContact**](docs/ContactsApi.md#getexternalcontact) | **GET** /v1/contacts/external/{system}/{external_id} | Get a contact by its id in another system
 *ContactsApi* | [**listContacts**](docs/ContactsApi.md#listcontacts) | **GET** /v1/contacts | List contacts
 *ContactsApi* | [**updateContact**](docs/ContactsApi.md#updatecontactoperation) | **PATCH** /v1/contacts/{id} | Update a contact
+*ContactsApi* | [**upsertExternalContact**](docs/ContactsApi.md#upsertexternalcontact) | **PUT** /v1/contacts/external/{system}/{external_id} | Create or update a contact by its id in another system
 *DashboardApi* | [**getAuditSummary**](docs/DashboardApi.md#getauditsummary) | **GET** /v1/audit-summary | Audit summary for the dashboard
 *DashboardApi* | [**getDomainsStatus**](docs/DashboardApi.md#getdomainsstatus) | **GET** /v1/domains/status | Domain health status for the dashboard
 *DashboardApi* | [**getIntegrationsSummary**](docs/DashboardApi.md#getintegrationssummary) | **GET** /v1/integrations-summary | Integrations summary for the dashboard
@@ -177,7 +183,8 @@ All URIs are relative to *https://api.lockally.com*
 *EncryptionApi* | [**createEncryptionKey**](docs/EncryptionApi.md#createencryptionkeyoperation) | **POST** /v1/encryption/keys | Upload an encryption key pair
 *EncryptionApi* | [**createEncryptionRecovery**](docs/EncryptionApi.md#createencryptionrecoveryoperation) | **POST** /v1/encryption/recovery | Store an encryption recovery blob
 *EncryptionApi* | [**getEncryptionKey**](docs/EncryptionApi.md#getencryptionkey) | **GET** /v1/encryption/keys/{email} | Get encryption key for a mailbox
-*EncryptionApi* | [**rotateEncryptionKey**](docs/EncryptionApi.md#rotateencryptionkeyoperation) | **POST** /v1/encryption/keys/rotate | Rotate an encryption key
+*EncryptionApi* | [**getEncryptionStatus**](docs/EncryptionApi.md#getencryptionstatus) | **GET** /v1/encryption/status | End-to-end encryption status for the workspace
+*EncryptionApi* | [**rotateEncryptionKey**](docs/EncryptionApi.md#rotateencryptionkeyoperation) | **POST** /v1/encryption/keys/rotate | Re-seal an encryption key under a new password
 *HealthApi* | [**healthCheck**](docs/HealthApi.md#healthcheck) | **GET** /healthz | Liveness check
 *IpPoolsApi* | [**createDedicatedIPRequest**](docs/IpPoolsApi.md#creatededicatediprequestoperation) | **POST** /v1/dedicated-ip-requests | Request a dedicated IP
 *IpPoolsApi* | [**getIPAssignment**](docs/IpPoolsApi.md#getipassignment) | **GET** /v1/ip-assignment | Get current IP assignment
@@ -239,10 +246,12 @@ All URIs are relative to *https://api.lockally.com*
 *TemplatesApi* | [**listTemplates**](docs/TemplatesApi.md#listtemplates) | **GET** /v1/templates | List templates
 *TemplatesApi* | [**updateTemplate**](docs/TemplatesApi.md#updatetemplate) | **PUT** /v1/templates/{id} | Update a template
 *TenantApi* | [**getTenant**](docs/TenantApi.md#gettenant) | **GET** /v1/tenant | Get the calling tenant
+*TenantApi* | [**getTrackingPolicy**](docs/TenantApi.md#gettrackingpolicy) | **GET** /v1/tracking | Get the engagement tracking policy
 *TenantApi* | [**getUsage**](docs/TenantApi.md#getusage) | **GET** /v1/usage | Usage snapshot
+*TenantApi* | [**updateTrackingPolicy**](docs/TenantApi.md#updatetrackingpolicyoperation) | **PUT** /v1/tracking | Update the engagement tracking policy
 *TestApi* | [**simulateInboundEmail**](docs/TestApi.md#simulateinboundemail) | **POST** /v1/test/inbound | Simulate an inbound email (test keys only)
 *UsersApi* | [**createUser**](docs/UsersApi.md#createuseroperation) | **POST** /v1/users | Create a user
-*UsersApi* | [**deleteUser**](docs/UsersApi.md#deleteuser) | **DELETE** /v1/users/{id} | Delete a user
+*UsersApi* | [**deleteUser**](docs/UsersApi.md#deleteuser) | **DELETE** /v1/users/{id} | Deprovision a user
 *UsersApi* | [**getUser**](docs/UsersApi.md#getuser) | **GET** /v1/users/{id} | Get a user
 *UsersApi* | [**listUsers**](docs/UsersApi.md#listusers) | **GET** /v1/users | List users
 *UsersApi* | [**updateUser**](docs/UsersApi.md#updateuseroperation) | **PATCH** /v1/users/{id} | Update a user
@@ -275,6 +284,10 @@ All URIs are relative to *https://api.lockally.com*
 - [BatchLookupPublicKeys200ResponseDataInner](docs/BatchLookupPublicKeys200ResponseDataInner.md)
 - [BatchResult](docs/BatchResult.md)
 - [BillingStatus](docs/BillingStatus.md)
+- [BulkUpsertExternalContacts200Response](docs/BulkUpsertExternalContacts200Response.md)
+- [BulkUpsertExternalContacts200ResponseResultsInner](docs/BulkUpsertExternalContacts200ResponseResultsInner.md)
+- [BulkUpsertExternalContactsRequest](docs/BulkUpsertExternalContactsRequest.md)
+- [BulkUpsertExternalContactsRequestContactsInner](docs/BulkUpsertExternalContactsRequestContactsInner.md)
 - [Calendar](docs/Calendar.md)
 - [CalendarEvent](docs/CalendarEvent.md)
 - [CalendarIntegration](docs/CalendarIntegration.md)
@@ -324,6 +337,7 @@ All URIs are relative to *https://api.lockally.com*
 - [DraftList](docs/DraftList.md)
 - [DraftResult](docs/DraftResult.md)
 - [ExportMailbox201Response](docs/ExportMailbox201Response.md)
+- [ExternalContactInput](docs/ExternalContactInput.md)
 - [GALSettings](docs/GALSettings.md)
 - [GetAddOnStatus200Response](docs/GetAddOnStatus200Response.md)
 - [GetAuditSummary200Response](docs/GetAuditSummary200Response.md)
@@ -346,6 +360,8 @@ All URIs are relative to *https://api.lockally.com*
 - [GetDomainsStatus200ResponseDomainsInner](docs/GetDomainsStatus200ResponseDomainsInner.md)
 - [GetDomainsStatus200ResponseDomainsInnerChecksInner](docs/GetDomainsStatus200ResponseDomainsInnerChecksInner.md)
 - [GetEncryptionKey200Response](docs/GetEncryptionKey200Response.md)
+- [GetEncryptionStatus200Response](docs/GetEncryptionStatus200Response.md)
+- [GetEncryptionStatus200ResponseMailboxesInner](docs/GetEncryptionStatus200ResponseMailboxesInner.md)
 - [GetIPAssignment200Response](docs/GetIPAssignment200Response.md)
 - [GetIntegrationsSummary200Response](docs/GetIntegrationsSummary200Response.md)
 - [GetIntegrationsSummary200ResponseApiKeysInner](docs/GetIntegrationsSummary200ResponseApiKeysInner.md)
@@ -403,6 +419,8 @@ All URIs are relative to *https://api.lockally.com*
 - [MessageStatsWindow](docs/MessageStatsWindow.md)
 - [Migration](docs/Migration.md)
 - [MigrationCredential](docs/MigrationCredential.md)
+- [MigrationDNSCheck](docs/MigrationDNSCheck.md)
+- [MigrationDomainDNS](docs/MigrationDomainDNS.md)
 - [MigrationEvent](docs/MigrationEvent.md)
 - [MigrationMailbox](docs/MigrationMailbox.md)
 - [MigrationProgress](docs/MigrationProgress.md)
@@ -416,6 +434,7 @@ All URIs are relative to *https://api.lockally.com*
 - [Resource](docs/Resource.md)
 - [ReturnPath](docs/ReturnPath.md)
 - [ReturnPathCheck](docs/ReturnPathCheck.md)
+- [RotateApiKeyRequest](docs/RotateApiKeyRequest.md)
 - [RotateEncryptionKeyRequest](docs/RotateEncryptionKeyRequest.md)
 - [SendEmail200Response](docs/SendEmail200Response.md)
 - [SendEmail202Response](docs/SendEmail202Response.md)
@@ -434,6 +453,8 @@ All URIs are relative to *https://api.lockally.com*
 - [Template](docs/Template.md)
 - [TemplateInput](docs/TemplateInput.md)
 - [Tenant](docs/Tenant.md)
+- [TenantHealthCheck](docs/TenantHealthCheck.md)
+- [TenantHealthReport](docs/TenantHealthReport.md)
 - [Thread](docs/Thread.md)
 - [ThreadClassification](docs/ThreadClassification.md)
 - [ThreadList](docs/ThreadList.md)
@@ -441,8 +462,10 @@ All URIs are relative to *https://api.lockally.com*
 - [ThreadMessageBody](docs/ThreadMessageBody.md)
 - [ThreadMessageBodyBody](docs/ThreadMessageBodyBody.md)
 - [ThreadSummary](docs/ThreadSummary.md)
+- [TrackingPolicy](docs/TrackingPolicy.md)
 - [UnitBundle](docs/UnitBundle.md)
 - [UpdateAdminRequest](docs/UpdateAdminRequest.md)
+- [UpdateApiKeyRequest](docs/UpdateApiKeyRequest.md)
 - [UpdateCalendarEventRequest](docs/UpdateCalendarEventRequest.md)
 - [UpdateCalendarIntegrationRequest](docs/UpdateCalendarIntegrationRequest.md)
 - [UpdateCalendarMemberRequest](docs/UpdateCalendarMemberRequest.md)
@@ -456,6 +479,7 @@ All URIs are relative to *https://api.lockally.com*
 - [UpdateMigrationMailboxRequest](docs/UpdateMigrationMailboxRequest.md)
 - [UpdateMigrationRequest](docs/UpdateMigrationRequest.md)
 - [UpdateResourceRequest](docs/UpdateResourceRequest.md)
+- [UpdateTrackingPolicyRequest](docs/UpdateTrackingPolicyRequest.md)
 - [UpdateUserRequest](docs/UpdateUserRequest.md)
 - [UpdateWebhookRequest](docs/UpdateWebhookRequest.md)
 - [User](docs/User.md)
@@ -494,7 +518,7 @@ and is automatically generated by the
 [OpenAPI Generator](https://openapi-generator.tech) project:
 
 - API version: `0.1.0`
-- Package version: `0.3.3`
+- Package version: `0.4.0`
 - Generator version: `7.23.0`
 - Build package: `org.openapitools.codegen.languages.TypeScriptFetchClientCodegen`
 

@@ -63,6 +63,11 @@ export interface GetReturnPathRequest {
     domain: string;
 }
 
+export interface ListDomainsRequest {
+    sort?: ListDomainsSortEnum;
+    order?: ListDomainsOrderEnum;
+}
+
 export interface VerifyDomainRequest {
     domain: string;
 }
@@ -223,25 +228,29 @@ export interface DomainsApiInterface {
 
     /**
      * Creates request options for listDomains without sending the request
+     * @param {'domain' | 'created_at' | 'verified_at'} [sort] Field to order by. This list holds tens of rows per account, so every column is offered and none needs an index.
+     * @param {'asc' | 'desc'} [order] Defaults to desc for the default field and asc for any other. Always tie-broken on id, so the order is total.
      * @throws {RequiredError}
      * @memberof DomainsApiInterface
      */
-    listDomainsRequestOpts(): Promise<runtime.RequestOpts>;
+    listDomainsRequestOpts(requestParameters: ListDomainsRequest): Promise<runtime.RequestOpts>;
 
     /**
      * Returns every domain registered under the calling tenant.
      * @summary List domains
+     * @param {'domain' | 'created_at' | 'verified_at'} [sort] Field to order by. This list holds tens of rows per account, so every column is offered and none needs an index.
+     * @param {'asc' | 'desc'} [order] Defaults to desc for the default field and asc for any other. Always tie-broken on id, so the order is total.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DomainsApiInterface
      */
-    listDomainsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListDomains200Response>>;
+    listDomainsRaw(requestParameters: ListDomainsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListDomains200Response>>;
 
     /**
      * Returns every domain registered under the calling tenant.
      * List domains
      */
-    listDomains(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListDomains200Response>;
+    listDomains(requestParameters: ListDomainsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListDomains200Response>;
 
     /**
      * Creates request options for verifyDomain without sending the request
@@ -629,8 +638,16 @@ export class DomainsApi extends runtime.BaseAPI implements DomainsApiInterface {
     /**
      * Creates request options for listDomains without sending the request
      */
-    async listDomainsRequestOpts(): Promise<runtime.RequestOpts> {
+    async listDomainsRequestOpts(requestParameters: ListDomainsRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
+
+        if (requestParameters['sort'] != null) {
+            queryParameters['sort'] = requestParameters['sort'];
+        }
+
+        if (requestParameters['order'] != null) {
+            queryParameters['order'] = requestParameters['order'];
+        }
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -657,8 +674,8 @@ export class DomainsApi extends runtime.BaseAPI implements DomainsApiInterface {
      * Returns every domain registered under the calling tenant.
      * List domains
      */
-    async listDomainsRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListDomains200Response>> {
-        const requestOptions = await this.listDomainsRequestOpts();
+    async listDomainsRaw(requestParameters: ListDomainsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListDomains200Response>> {
+        const requestOptions = await this.listDomainsRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => ListDomains200ResponseFromJSON(jsonValue));
@@ -668,8 +685,8 @@ export class DomainsApi extends runtime.BaseAPI implements DomainsApiInterface {
      * Returns every domain registered under the calling tenant.
      * List domains
      */
-    async listDomains(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListDomains200Response> {
-        const response = await this.listDomainsRaw(initOverrides);
+    async listDomains(requestParameters: ListDomainsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListDomains200Response> {
+        const response = await this.listDomainsRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -784,3 +801,21 @@ export class DomainsApi extends runtime.BaseAPI implements DomainsApiInterface {
     }
 
 }
+
+/**
+ * @export
+ */
+export const ListDomainsSortEnum = {
+    Domain: 'domain',
+    CreatedAt: 'created_at',
+    VerifiedAt: 'verified_at'
+} as const;
+export type ListDomainsSortEnum = typeof ListDomainsSortEnum[keyof typeof ListDomainsSortEnum];
+/**
+ * @export
+ */
+export const ListDomainsOrderEnum = {
+    Asc: 'asc',
+    Desc: 'desc'
+} as const;
+export type ListDomainsOrderEnum = typeof ListDomainsOrderEnum[keyof typeof ListDomainsOrderEnum];

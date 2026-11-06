@@ -39,6 +39,11 @@ import {
     GetEncryptionKey200ResponseToJSON,
 } from '../models/GetEncryptionKey200Response';
 import {
+    type GetEncryptionStatus200Response,
+    GetEncryptionStatus200ResponseFromJSON,
+    GetEncryptionStatus200ResponseToJSON,
+} from '../models/GetEncryptionStatus200Response';
+import {
     type Problem,
     ProblemFromJSON,
     ProblemToJSON,
@@ -108,7 +113,7 @@ export interface EncryptionApiInterface {
     createEncryptionKeyRequestOpts(requestParameters: CreateEncryptionKeyOperationRequest): Promise<runtime.RequestOpts>;
 
     /**
-     * 
+     * Only the mailbox\'s own webmail session may call this; an API key is refused with 403. The private key is sealed under that mailbox\'s password, which an administrator never has. `mailbox_email`, if sent, must be the caller\'s own mailbox. A mailbox that already has a key is starting over: the old key is kept inactive, not destroyed, and the new one starts without a recovery code.
      * @summary Upload an encryption key pair
      * @param {CreateEncryptionKeyRequest} createEncryptionKeyRequest 
      * @param {*} [options] Override http request option.
@@ -118,6 +123,7 @@ export interface EncryptionApiInterface {
     createEncryptionKeyRaw(requestParameters: CreateEncryptionKeyOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CreateEncryptionKey201Response>>;
 
     /**
+     * Only the mailbox\'s own webmail session may call this; an API key is refused with 403. The private key is sealed under that mailbox\'s password, which an administrator never has. `mailbox_email`, if sent, must be the caller\'s own mailbox. A mailbox that already has a key is starting over: the old key is kept inactive, not destroyed, and the new one starts without a recovery code.
      * Upload an encryption key pair
      */
     createEncryptionKey(requestParameters: CreateEncryptionKeyOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateEncryptionKey201Response>;
@@ -131,7 +137,7 @@ export interface EncryptionApiInterface {
     createEncryptionRecoveryRequestOpts(requestParameters: CreateEncryptionRecoveryOperationRequest): Promise<runtime.RequestOpts>;
 
     /**
-     * 
+     * Only the mailbox\'s own webmail session may call this; an API key is refused with 403. The private key is sealed under that mailbox\'s password, which an administrator never has. `mailbox_email`, if sent, must be the caller\'s own mailbox. The blob is the private key sealed under a recovery code the browser generated; the code itself is never sent. Replaces any earlier one.
      * @summary Store an encryption recovery blob
      * @param {CreateEncryptionRecoveryRequest} createEncryptionRecoveryRequest 
      * @param {*} [options] Override http request option.
@@ -141,6 +147,7 @@ export interface EncryptionApiInterface {
     createEncryptionRecoveryRaw(requestParameters: CreateEncryptionRecoveryOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>>;
 
     /**
+     * Only the mailbox\'s own webmail session may call this; an API key is refused with 403. The private key is sealed under that mailbox\'s password, which an administrator never has. `mailbox_email`, if sent, must be the caller\'s own mailbox. The blob is the private key sealed under a recovery code the browser generated; the code itself is never sent. Replaces any earlier one.
      * Store an encryption recovery blob
      */
     createEncryptionRecovery(requestParameters: CreateEncryptionRecoveryOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
@@ -154,7 +161,7 @@ export interface EncryptionApiInterface {
     getEncryptionKeyRequestOpts(requestParameters: GetEncryptionKeyRequest): Promise<runtime.RequestOpts>;
 
     /**
-     * 
+     * Anyone in the workspace gets the public key. The mailbox\'s own webmail session also gets its sealed private key, its sealed recovery copy and the recovery state.
      * @summary Get encryption key for a mailbox
      * @param {string} email 
      * @param {*} [options] Override http request option.
@@ -164,9 +171,32 @@ export interface EncryptionApiInterface {
     getEncryptionKeyRaw(requestParameters: GetEncryptionKeyRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetEncryptionKey200Response>>;
 
     /**
+     * Anyone in the workspace gets the public key. The mailbox\'s own webmail session also gets its sealed private key, its sealed recovery copy and the recovery state.
      * Get encryption key for a mailbox
      */
     getEncryptionKey(requestParameters: GetEncryptionKeyRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetEncryptionKey200Response>;
+
+    /**
+     * Creates request options for getEncryptionStatus without sending the request
+     * @throws {RequiredError}
+     * @memberof EncryptionApiInterface
+     */
+    getEncryptionStatusRequestOpts(): Promise<runtime.RequestOpts>;
+
+    /**
+     * For administrators: whether the add-on is on, and for each mailbox whether it has a key and a recovery code. Carries no key material.
+     * @summary End-to-end encryption status for the workspace
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof EncryptionApiInterface
+     */
+    getEncryptionStatusRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetEncryptionStatus200Response>>;
+
+    /**
+     * For administrators: whether the add-on is on, and for each mailbox whether it has a key and a recovery code. Carries no key material.
+     * End-to-end encryption status for the workspace
+     */
+    getEncryptionStatus(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetEncryptionStatus200Response>;
 
     /**
      * Creates request options for rotateEncryptionKey without sending the request
@@ -177,8 +207,8 @@ export interface EncryptionApiInterface {
     rotateEncryptionKeyRequestOpts(requestParameters: RotateEncryptionKeyOperationRequest): Promise<runtime.RequestOpts>;
 
     /**
-     * 
-     * @summary Rotate an encryption key
+     * Only the mailbox\'s own webmail session may call this; an API key is refused with 403. The private key is sealed under that mailbox\'s password, which an administrator never has. `mailbox_email`, if sent, must be the caller\'s own mailbox. The key pair does not change, so every message stays readable.
+     * @summary Re-seal an encryption key under a new password
      * @param {RotateEncryptionKeyRequest} rotateEncryptionKeyRequest 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -187,7 +217,8 @@ export interface EncryptionApiInterface {
     rotateEncryptionKeyRaw(requestParameters: RotateEncryptionKeyOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>>;
 
     /**
-     * Rotate an encryption key
+     * Only the mailbox\'s own webmail session may call this; an API key is refused with 403. The private key is sealed under that mailbox\'s password, which an administrator never has. `mailbox_email`, if sent, must be the caller\'s own mailbox. The key pair does not change, so every message stays readable.
+     * Re-seal an encryption key under a new password
      */
     rotateEncryptionKey(requestParameters: RotateEncryptionKeyOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
 
@@ -292,6 +323,7 @@ export class EncryptionApi extends runtime.BaseAPI implements EncryptionApiInter
     }
 
     /**
+     * Only the mailbox\'s own webmail session may call this; an API key is refused with 403. The private key is sealed under that mailbox\'s password, which an administrator never has. `mailbox_email`, if sent, must be the caller\'s own mailbox. A mailbox that already has a key is starting over: the old key is kept inactive, not destroyed, and the new one starts without a recovery code.
      * Upload an encryption key pair
      */
     async createEncryptionKeyRaw(requestParameters: CreateEncryptionKeyOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CreateEncryptionKey201Response>> {
@@ -302,6 +334,7 @@ export class EncryptionApi extends runtime.BaseAPI implements EncryptionApiInter
     }
 
     /**
+     * Only the mailbox\'s own webmail session may call this; an API key is refused with 403. The private key is sealed under that mailbox\'s password, which an administrator never has. `mailbox_email`, if sent, must be the caller\'s own mailbox. A mailbox that already has a key is starting over: the old key is kept inactive, not destroyed, and the new one starts without a recovery code.
      * Upload an encryption key pair
      */
     async createEncryptionKey(requestParameters: CreateEncryptionKeyOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateEncryptionKey201Response> {
@@ -347,6 +380,7 @@ export class EncryptionApi extends runtime.BaseAPI implements EncryptionApiInter
     }
 
     /**
+     * Only the mailbox\'s own webmail session may call this; an API key is refused with 403. The private key is sealed under that mailbox\'s password, which an administrator never has. `mailbox_email`, if sent, must be the caller\'s own mailbox. The blob is the private key sealed under a recovery code the browser generated; the code itself is never sent. Replaces any earlier one.
      * Store an encryption recovery blob
      */
     async createEncryptionRecoveryRaw(requestParameters: CreateEncryptionRecoveryOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
@@ -357,6 +391,7 @@ export class EncryptionApi extends runtime.BaseAPI implements EncryptionApiInter
     }
 
     /**
+     * Only the mailbox\'s own webmail session may call this; an API key is refused with 403. The private key is sealed under that mailbox\'s password, which an administrator never has. `mailbox_email`, if sent, must be the caller\'s own mailbox. The blob is the private key sealed under a recovery code the browser generated; the code itself is never sent. Replaces any earlier one.
      * Store an encryption recovery blob
      */
     async createEncryptionRecovery(requestParameters: CreateEncryptionRecoveryOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
@@ -399,6 +434,7 @@ export class EncryptionApi extends runtime.BaseAPI implements EncryptionApiInter
     }
 
     /**
+     * Anyone in the workspace gets the public key. The mailbox\'s own webmail session also gets its sealed private key, its sealed recovery copy and the recovery state.
      * Get encryption key for a mailbox
      */
     async getEncryptionKeyRaw(requestParameters: GetEncryptionKeyRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetEncryptionKey200Response>> {
@@ -409,10 +445,58 @@ export class EncryptionApi extends runtime.BaseAPI implements EncryptionApiInter
     }
 
     /**
+     * Anyone in the workspace gets the public key. The mailbox\'s own webmail session also gets its sealed private key, its sealed recovery copy and the recovery state.
      * Get encryption key for a mailbox
      */
     async getEncryptionKey(requestParameters: GetEncryptionKeyRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetEncryptionKey200Response> {
         const response = await this.getEncryptionKeyRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for getEncryptionStatus without sending the request
+     */
+    async getEncryptionStatusRequestOpts(): Promise<runtime.RequestOpts> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("bearerAuth", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/encryption/status`;
+
+        return {
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * For administrators: whether the add-on is on, and for each mailbox whether it has a key and a recovery code. Carries no key material.
+     * End-to-end encryption status for the workspace
+     */
+    async getEncryptionStatusRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GetEncryptionStatus200Response>> {
+        const requestOptions = await this.getEncryptionStatusRequestOpts();
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => GetEncryptionStatus200ResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * For administrators: whether the add-on is on, and for each mailbox whether it has a key and a recovery code. Carries no key material.
+     * End-to-end encryption status for the workspace
+     */
+    async getEncryptionStatus(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetEncryptionStatus200Response> {
+        const response = await this.getEncryptionStatusRaw(initOverrides);
         return await response.value();
     }
 
@@ -454,7 +538,8 @@ export class EncryptionApi extends runtime.BaseAPI implements EncryptionApiInter
     }
 
     /**
-     * Rotate an encryption key
+     * Only the mailbox\'s own webmail session may call this; an API key is refused with 403. The private key is sealed under that mailbox\'s password, which an administrator never has. `mailbox_email`, if sent, must be the caller\'s own mailbox. The key pair does not change, so every message stays readable.
+     * Re-seal an encryption key under a new password
      */
     async rotateEncryptionKeyRaw(requestParameters: RotateEncryptionKeyOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         const requestOptions = await this.rotateEncryptionKeyRequestOpts(requestParameters);
@@ -464,7 +549,8 @@ export class EncryptionApi extends runtime.BaseAPI implements EncryptionApiInter
     }
 
     /**
-     * Rotate an encryption key
+     * Only the mailbox\'s own webmail session may call this; an API key is refused with 403. The private key is sealed under that mailbox\'s password, which an administrator never has. `mailbox_email`, if sent, must be the caller\'s own mailbox. The key pair does not change, so every message stays readable.
+     * Re-seal an encryption key under a new password
      */
     async rotateEncryptionKey(requestParameters: RotateEncryptionKeyOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.rotateEncryptionKeyRaw(requestParameters, initOverrides);

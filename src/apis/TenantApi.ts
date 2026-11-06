@@ -28,6 +28,20 @@ import {
     TenantFromJSON,
     TenantToJSON,
 } from '../models/Tenant';
+import {
+    type TrackingPolicy,
+    TrackingPolicyFromJSON,
+    TrackingPolicyToJSON,
+} from '../models/TrackingPolicy';
+import {
+    type UpdateTrackingPolicyRequest,
+    UpdateTrackingPolicyRequestFromJSON,
+    UpdateTrackingPolicyRequestToJSON,
+} from '../models/UpdateTrackingPolicyRequest';
+
+export interface UpdateTrackingPolicyOperationRequest {
+    updateTrackingPolicyRequest: UpdateTrackingPolicyRequest;
+}
 
 /**
  * TenantApi - interface
@@ -59,6 +73,28 @@ export interface TenantApiInterface {
     getTenant(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Tenant>;
 
     /**
+     * Creates request options for getTrackingPolicy without sending the request
+     * @throws {RequiredError}
+     * @memberof TenantApiInterface
+     */
+    getTrackingPolicyRequestOpts(): Promise<runtime.RequestOpts>;
+
+    /**
+     * Whether open and click tracking are enabled for this account. **Both are off until switched on**, and an account that has never set a policy reads as off rather than as an error.  `configured` reports whether this deployment holds a signing secret. Without one no tracking token can be minted or verified, so tracking cannot work however the flags are set, and a caller seeing `track_opens: true` with nothing arriving deserves to know why. 
+     * @summary Get the engagement tracking policy
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TenantApiInterface
+     */
+    getTrackingPolicyRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TrackingPolicy>>;
+
+    /**
+     * Whether open and click tracking are enabled for this account. **Both are off until switched on**, and an account that has never set a policy reads as off rather than as an error.  `configured` reports whether this deployment holds a signing secret. Without one no tracking token can be minted or verified, so tracking cannot work however the flags are set, and a caller seeing `track_opens: true` with nothing arriving deserves to know why. 
+     * Get the engagement tracking policy
+     */
+    getTrackingPolicy(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<TrackingPolicy>;
+
+    /**
      * Creates request options for getUsage without sending the request
      * @throws {RequiredError}
      * @memberof TenantApiInterface
@@ -79,6 +115,30 @@ export interface TenantApiInterface {
      * Usage snapshot
      */
     getUsage(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetUsage200Response>;
+
+    /**
+     * Creates request options for updateTrackingPolicy without sending the request
+     * @param {UpdateTrackingPolicyRequest} updateTrackingPolicyRequest 
+     * @throws {RequiredError}
+     * @memberof TenantApiInterface
+     */
+    updateTrackingPolicyRequestOpts(requestParameters: UpdateTrackingPolicyOperationRequest): Promise<runtime.RequestOpts>;
+
+    /**
+     * Enables or disables tracking for the account. Send either flag or both; an omitted flag is left unchanged rather than reset.  **Enabling this changes what Lockally collects about your recipients**, who have no relationship with us. You are the controller for them. What is collected is a user-agent string, a timestamp, and for a click the destination URL: **no IP address**, ever. The change is written to your audit log. 
+     * @summary Update the engagement tracking policy
+     * @param {UpdateTrackingPolicyRequest} updateTrackingPolicyRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof TenantApiInterface
+     */
+    updateTrackingPolicyRaw(requestParameters: UpdateTrackingPolicyOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TrackingPolicy>>;
+
+    /**
+     * Enables or disables tracking for the account. Send either flag or both; an omitted flag is left unchanged rather than reset.  **Enabling this changes what Lockally collects about your recipients**, who have no relationship with us. You are the controller for them. What is collected is a user-agent string, a timestamp, and for a click the destination URL: **no IP address**, ever. The change is written to your audit log. 
+     * Update the engagement tracking policy
+     */
+    updateTrackingPolicy(requestParameters: UpdateTrackingPolicyOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<TrackingPolicy>;
 
 }
 
@@ -135,6 +195,53 @@ export class TenantApi extends runtime.BaseAPI implements TenantApiInterface {
     }
 
     /**
+     * Creates request options for getTrackingPolicy without sending the request
+     */
+    async getTrackingPolicyRequestOpts(): Promise<runtime.RequestOpts> {
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("bearerAuth", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/tracking`;
+
+        return {
+            path: urlPath,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        };
+    }
+
+    /**
+     * Whether open and click tracking are enabled for this account. **Both are off until switched on**, and an account that has never set a policy reads as off rather than as an error.  `configured` reports whether this deployment holds a signing secret. Without one no tracking token can be minted or verified, so tracking cannot work however the flags are set, and a caller seeing `track_opens: true` with nothing arriving deserves to know why. 
+     * Get the engagement tracking policy
+     */
+    async getTrackingPolicyRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TrackingPolicy>> {
+        const requestOptions = await this.getTrackingPolicyRequestOpts();
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => TrackingPolicyFromJSON(jsonValue));
+    }
+
+    /**
+     * Whether open and click tracking are enabled for this account. **Both are off until switched on**, and an account that has never set a policy reads as off rather than as an error.  `configured` reports whether this deployment holds a signing secret. Without one no tracking token can be minted or verified, so tracking cannot work however the flags are set, and a caller seeing `track_opens: true` with nothing arriving deserves to know why. 
+     * Get the engagement tracking policy
+     */
+    async getTrackingPolicy(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<TrackingPolicy> {
+        const response = await this.getTrackingPolicyRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
      * Creates request options for getUsage without sending the request
      */
     async getUsageRequestOpts(): Promise<runtime.RequestOpts> {
@@ -178,6 +285,63 @@ export class TenantApi extends runtime.BaseAPI implements TenantApiInterface {
      */
     async getUsage(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GetUsage200Response> {
         const response = await this.getUsageRaw(initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for updateTrackingPolicy without sending the request
+     */
+    async updateTrackingPolicyRequestOpts(requestParameters: UpdateTrackingPolicyOperationRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['updateTrackingPolicyRequest'] == null) {
+            throw new runtime.RequiredError(
+                'updateTrackingPolicyRequest',
+                'Required parameter "updateTrackingPolicyRequest" was null or undefined when calling updateTrackingPolicy().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("bearerAuth", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/tracking`;
+
+        return {
+            path: urlPath,
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: UpdateTrackingPolicyRequestToJSON(requestParameters['updateTrackingPolicyRequest']),
+        };
+    }
+
+    /**
+     * Enables or disables tracking for the account. Send either flag or both; an omitted flag is left unchanged rather than reset.  **Enabling this changes what Lockally collects about your recipients**, who have no relationship with us. You are the controller for them. What is collected is a user-agent string, a timestamp, and for a click the destination URL: **no IP address**, ever. The change is written to your audit log. 
+     * Update the engagement tracking policy
+     */
+    async updateTrackingPolicyRaw(requestParameters: UpdateTrackingPolicyOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TrackingPolicy>> {
+        const requestOptions = await this.updateTrackingPolicyRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => TrackingPolicyFromJSON(jsonValue));
+    }
+
+    /**
+     * Enables or disables tracking for the account. Send either flag or both; an omitted flag is left unchanged rather than reset.  **Enabling this changes what Lockally collects about your recipients**, who have no relationship with us. You are the controller for them. What is collected is a user-agent string, a timestamp, and for a click the destination URL: **no IP address**, ever. The change is written to your audit log. 
+     * Update the engagement tracking policy
+     */
+    async updateTrackingPolicy(requestParameters: UpdateTrackingPolicyOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<TrackingPolicy> {
+        const response = await this.updateTrackingPolicyRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

@@ -55,6 +55,36 @@ export interface GetEncryptionKey200Response {
      * @memberof GetEncryptionKey200Response
      */
     version?: number;
+    /**
+     * 
+     * @type {Date}
+     * @memberof GetEncryptionKey200Response
+     */
+    createdAt?: Date;
+    /**
+     * 
+     * @type {Date}
+     * @memberof GetEncryptionKey200Response
+     */
+    rotatedAt?: Date;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof GetEncryptionKey200Response
+     */
+    hasRecovery?: boolean;
+    /**
+     * 
+     * @type {Date}
+     * @memberof GetEncryptionKey200Response
+     */
+    recoverySetAt?: Date;
+    /**
+     * 
+     * @type {string}
+     * @memberof GetEncryptionKey200Response
+     */
+    recoveryBlob?: string;
 }
 
 /**
@@ -80,6 +110,11 @@ export function GetEncryptionKey200ResponseFromJSONTyped(json: any, ignoreDiscri
         'encryptedPrivateKey': json['encrypted_private_key'] == null ? undefined : json['encrypted_private_key'],
         'kdfParams': json['kdf_params'] == null ? undefined : json['kdf_params'],
         'version': json['version'] == null ? undefined : json['version'],
+        'createdAt': json['created_at'] == null ? undefined : (new Date(json['created_at'])),
+        'rotatedAt': json['rotated_at'] == null ? undefined : (new Date(json['rotated_at'])),
+        'hasRecovery': json['has_recovery'] == null ? undefined : json['has_recovery'],
+        'recoverySetAt': json['recovery_set_at'] == null ? undefined : (new Date(json['recovery_set_at'])),
+        'recoveryBlob': json['recovery_blob'] == null ? undefined : json['recovery_blob'],
     };
 }
 
@@ -100,6 +135,11 @@ export function GetEncryptionKey200ResponseToJSONTyped(value?: GetEncryptionKey2
         'encrypted_private_key': value['encryptedPrivateKey'],
         'kdf_params': value['kdfParams'],
         'version': value['version'],
+        'created_at': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
+        'rotated_at': value['rotatedAt'] == null ? value['rotatedAt'] : value['rotatedAt'].toISOString(),
+        'has_recovery': value['hasRecovery'],
+        'recovery_set_at': value['recoverySetAt'] == null ? value['recoverySetAt'] : value['recoverySetAt'].toISOString(),
+        'recovery_blob': value['recoveryBlob'],
     };
 }
 

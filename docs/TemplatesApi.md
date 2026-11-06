@@ -226,7 +226,7 @@ example().catch(console.error);
 
 ## listTemplates
 
-> ListTemplates200Response listTemplates()
+> ListTemplates200Response listTemplates(sort, order)
 
 List templates
 
@@ -247,8 +247,15 @@ async function example() {
   });
   const api = new TemplatesApi(config);
 
+  const body = {
+    // 'name' | 'created_at' | 'updated_at' | Field to order by. This list holds tens of rows per account, so every column is offered and none needs an index. (optional)
+    sort: sort_example,
+    // 'asc' | 'desc' | Defaults to asc for the default field and asc for any other. Always tie-broken on id, so the order is total. (optional)
+    order: order_example,
+  } satisfies ListTemplatesRequest;
+
   try {
-    const data = await api.listTemplates();
+    const data = await api.listTemplates(body);
     console.log(data);
   } catch (error) {
     console.error(error);
@@ -261,7 +268,11 @@ example().catch(console.error);
 
 ### Parameters
 
-This endpoint does not need any parameter.
+
+| Name | Type | Description  | Notes |
+|------------- | ------------- | ------------- | -------------|
+| **sort** | `name`, `created_at`, `updated_at` | Field to order by. This list holds tens of rows per account, so every column is offered and none needs an index. | [Optional] [Defaults to `&#39;name&#39;`] [Enum: name, created_at, updated_at] |
+| **order** | `asc`, `desc` | Defaults to asc for the default field and asc for any other. Always tie-broken on id, so the order is total. | [Optional] [Defaults to `undefined`] [Enum: asc, desc] |
 
 ### Return type
 

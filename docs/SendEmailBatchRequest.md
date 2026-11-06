@@ -7,6 +7,7 @@
 Name | Type
 ------------ | -------------
 `messages` | [Array&lt;SendMessage&gt;](SendMessage.md)
+`variables` | { [key: string]: string; }
 
 ## Example
 
@@ -16,6 +17,7 @@ import type { SendEmailBatchRequest } from 'lockally'
 // TODO: Update the object below with actual values
 const example = {
   "messages": null,
+  "variables": null,
 } satisfies SendEmailBatchRequest
 
 console.log(example)

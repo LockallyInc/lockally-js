@@ -14,6 +14,11 @@
 
 import * as runtime from '../runtime';
 import {
+    type APIKey,
+    APIKeyFromJSON,
+    APIKeyToJSON,
+} from '../models/APIKey';
+import {
     type CreateApiKey201Response,
     CreateApiKey201ResponseFromJSON,
     CreateApiKey201ResponseToJSON,
@@ -33,13 +38,38 @@ import {
     ProblemFromJSON,
     ProblemToJSON,
 } from '../models/Problem';
+import {
+    type RotateApiKeyRequest,
+    RotateApiKeyRequestFromJSON,
+    RotateApiKeyRequestToJSON,
+} from '../models/RotateApiKeyRequest';
+import {
+    type UpdateApiKeyRequest,
+    UpdateApiKeyRequestFromJSON,
+    UpdateApiKeyRequestToJSON,
+} from '../models/UpdateApiKeyRequest';
 
 export interface CreateApiKeyOperationRequest {
     createApiKeyRequest: CreateApiKeyRequest;
 }
 
+export interface ListApiKeysRequest {
+    sort?: ListApiKeysSortEnum;
+    order?: ListApiKeysOrderEnum;
+}
+
 export interface RevokeApiKeyRequest {
     id: string;
+}
+
+export interface RotateApiKeyOperationRequest {
+    id: string;
+    rotateApiKeyRequest?: RotateApiKeyRequest;
+}
+
+export interface UpdateApiKeyOperationRequest {
+    id: string;
+    updateApiKeyRequest: UpdateApiKeyRequest;
 }
 
 /**
@@ -75,25 +105,29 @@ export interface ApiKeysApiInterface {
 
     /**
      * Creates request options for listApiKeys without sending the request
+     * @param {'label' | 'created_at' | 'last_used_at' | 'expires_at'} [sort] Field to order by. This list holds tens of rows per account, so every column is offered and none needs an index.
+     * @param {'asc' | 'desc'} [order] Defaults to desc for the default field and asc for any other. Always tie-broken on id, so the order is total.
      * @throws {RequiredError}
      * @memberof ApiKeysApiInterface
      */
-    listApiKeysRequestOpts(): Promise<runtime.RequestOpts>;
+    listApiKeysRequestOpts(requestParameters: ListApiKeysRequest): Promise<runtime.RequestOpts>;
 
     /**
      * Returns all API keys (active and revoked) belonging to the calling tenant. The `secret` is **never** returned, only prefix + metadata. 
      * @summary List API keys
+     * @param {'label' | 'created_at' | 'last_used_at' | 'expires_at'} [sort] Field to order by. This list holds tens of rows per account, so every column is offered and none needs an index.
+     * @param {'asc' | 'desc'} [order] Defaults to desc for the default field and asc for any other. Always tie-broken on id, so the order is total.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof ApiKeysApiInterface
      */
-    listApiKeysRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListApiKeys200Response>>;
+    listApiKeysRaw(requestParameters: ListApiKeysRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListApiKeys200Response>>;
 
     /**
      * Returns all API keys (active and revoked) belonging to the calling tenant. The `secret` is **never** returned, only prefix + metadata. 
      * List API keys
      */
-    listApiKeys(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListApiKeys200Response>;
+    listApiKeys(requestParameters: ListApiKeysRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListApiKeys200Response>;
 
     /**
      * Creates request options for revokeApiKey without sending the request
@@ -118,6 +152,58 @@ export interface ApiKeysApiInterface {
      * Revoke an API key
      */
     revokeApiKey(requestParameters: RevokeApiKeyRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
+
+    /**
+     * Creates request options for rotateApiKey without sending the request
+     * @param {string} id 
+     * @param {RotateApiKeyRequest} [rotateApiKeyRequest] 
+     * @throws {RequiredError}
+     * @memberof ApiKeysApiInterface
+     */
+    rotateApiKeyRequestOpts(requestParameters: RotateApiKeyOperationRequest): Promise<runtime.RequestOpts>;
+
+    /**
+     * Issues a successor key and puts a short expiry on this one, so **both work until the overlap ends**. That window is the point: without it, rotation is revocation with extra steps and every caller has to swap credentials in the same instant.  The successor inherits this key\'s scopes, its label (the label names the integration, and the integration has not changed) and its test flag. Its full `secret` is in this response and nowhere else.  The response\'s `expires_at` is the **predecessor\'s** deadline, so you can see from the rotation itself how long you have to cut over.  A key that has already been rotated cannot be rotated again: chaining overlaps would leave several live keys for one integration, which is the opposite of the intent. Rotate the successor instead. 
+     * @summary Rotate an API key
+     * @param {string} id 
+     * @param {RotateApiKeyRequest} [rotateApiKeyRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ApiKeysApiInterface
+     */
+    rotateApiKeyRaw(requestParameters: RotateApiKeyOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CreateApiKey201Response>>;
+
+    /**
+     * Issues a successor key and puts a short expiry on this one, so **both work until the overlap ends**. That window is the point: without it, rotation is revocation with extra steps and every caller has to swap credentials in the same instant.  The successor inherits this key\'s scopes, its label (the label names the integration, and the integration has not changed) and its test flag. Its full `secret` is in this response and nowhere else.  The response\'s `expires_at` is the **predecessor\'s** deadline, so you can see from the rotation itself how long you have to cut over.  A key that has already been rotated cannot be rotated again: chaining overlaps would leave several live keys for one integration, which is the opposite of the intent. Rotate the successor instead. 
+     * Rotate an API key
+     */
+    rotateApiKey(requestParameters: RotateApiKeyOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateApiKey201Response>;
+
+    /**
+     * Creates request options for updateApiKey without sending the request
+     * @param {string} id 
+     * @param {UpdateApiKeyRequest} updateApiKeyRequest 
+     * @throws {RequiredError}
+     * @memberof ApiKeysApiInterface
+     */
+    updateApiKeyRequestOpts(requestParameters: UpdateApiKeyOperationRequest): Promise<runtime.RequestOpts>;
+
+    /**
+     * Changes a key\'s label, scopes or expiry in place, without reissuing the secret.  **Every field is optional and absent means unchanged.** Renaming a key does not clear its expiry. For `expires_at` there are three distinct requests: omit the field to leave the expiry alone, send a timestamp to set one, and send an explicit `null` to remove one.  Scopes are replaced wholesale, not merged. This endpoint does not restrict which scopes you may grant, because `POST /v1/api-keys` never has either: a key with `tenant:admin` can already mint a key with any scope, so `tenant:admin` is root-equivalent for key management.  A revoked key cannot be updated. 
+     * @summary Update an API key
+     * @param {string} id 
+     * @param {UpdateApiKeyRequest} updateApiKeyRequest 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ApiKeysApiInterface
+     */
+    updateApiKeyRaw(requestParameters: UpdateApiKeyOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<APIKey>>;
+
+    /**
+     * Changes a key\'s label, scopes or expiry in place, without reissuing the secret.  **Every field is optional and absent means unchanged.** Renaming a key does not clear its expiry. For `expires_at` there are three distinct requests: omit the field to leave the expiry alone, send a timestamp to set one, and send an explicit `null` to remove one.  Scopes are replaced wholesale, not merged. This endpoint does not restrict which scopes you may grant, because `POST /v1/api-keys` never has either: a key with `tenant:admin` can already mint a key with any scope, so `tenant:admin` is root-equivalent for key management.  A revoked key cannot be updated. 
+     * Update an API key
+     */
+    updateApiKey(requestParameters: UpdateApiKeyOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<APIKey>;
 
 }
 
@@ -186,8 +272,16 @@ export class ApiKeysApi extends runtime.BaseAPI implements ApiKeysApiInterface {
     /**
      * Creates request options for listApiKeys without sending the request
      */
-    async listApiKeysRequestOpts(): Promise<runtime.RequestOpts> {
+    async listApiKeysRequestOpts(requestParameters: ListApiKeysRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
+
+        if (requestParameters['sort'] != null) {
+            queryParameters['sort'] = requestParameters['sort'];
+        }
+
+        if (requestParameters['order'] != null) {
+            queryParameters['order'] = requestParameters['order'];
+        }
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -214,8 +308,8 @@ export class ApiKeysApi extends runtime.BaseAPI implements ApiKeysApiInterface {
      * Returns all API keys (active and revoked) belonging to the calling tenant. The `secret` is **never** returned, only prefix + metadata. 
      * List API keys
      */
-    async listApiKeysRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListApiKeys200Response>> {
-        const requestOptions = await this.listApiKeysRequestOpts();
+    async listApiKeysRaw(requestParameters: ListApiKeysRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListApiKeys200Response>> {
+        const requestOptions = await this.listApiKeysRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => ListApiKeys200ResponseFromJSON(jsonValue));
@@ -225,8 +319,8 @@ export class ApiKeysApi extends runtime.BaseAPI implements ApiKeysApiInterface {
      * Returns all API keys (active and revoked) belonging to the calling tenant. The `secret` is **never** returned, only prefix + metadata. 
      * List API keys
      */
-    async listApiKeys(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListApiKeys200Response> {
-        const response = await this.listApiKeysRaw(initOverrides);
+    async listApiKeys(requestParameters: ListApiKeysRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListApiKeys200Response> {
+        const response = await this.listApiKeysRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -284,4 +378,146 @@ export class ApiKeysApi extends runtime.BaseAPI implements ApiKeysApiInterface {
         await this.revokeApiKeyRaw(requestParameters, initOverrides);
     }
 
+    /**
+     * Creates request options for rotateApiKey without sending the request
+     */
+    async rotateApiKeyRequestOpts(requestParameters: RotateApiKeyOperationRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling rotateApiKey().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("bearerAuth", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/api-keys/{id}/rotate`;
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+
+        return {
+            path: urlPath,
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: RotateApiKeyRequestToJSON(requestParameters['rotateApiKeyRequest']),
+        };
+    }
+
+    /**
+     * Issues a successor key and puts a short expiry on this one, so **both work until the overlap ends**. That window is the point: without it, rotation is revocation with extra steps and every caller has to swap credentials in the same instant.  The successor inherits this key\'s scopes, its label (the label names the integration, and the integration has not changed) and its test flag. Its full `secret` is in this response and nowhere else.  The response\'s `expires_at` is the **predecessor\'s** deadline, so you can see from the rotation itself how long you have to cut over.  A key that has already been rotated cannot be rotated again: chaining overlaps would leave several live keys for one integration, which is the opposite of the intent. Rotate the successor instead. 
+     * Rotate an API key
+     */
+    async rotateApiKeyRaw(requestParameters: RotateApiKeyOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CreateApiKey201Response>> {
+        const requestOptions = await this.rotateApiKeyRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => CreateApiKey201ResponseFromJSON(jsonValue));
+    }
+
+    /**
+     * Issues a successor key and puts a short expiry on this one, so **both work until the overlap ends**. That window is the point: without it, rotation is revocation with extra steps and every caller has to swap credentials in the same instant.  The successor inherits this key\'s scopes, its label (the label names the integration, and the integration has not changed) and its test flag. Its full `secret` is in this response and nowhere else.  The response\'s `expires_at` is the **predecessor\'s** deadline, so you can see from the rotation itself how long you have to cut over.  A key that has already been rotated cannot be rotated again: chaining overlaps would leave several live keys for one integration, which is the opposite of the intent. Rotate the successor instead. 
+     * Rotate an API key
+     */
+    async rotateApiKey(requestParameters: RotateApiKeyOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateApiKey201Response> {
+        const response = await this.rotateApiKeyRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Creates request options for updateApiKey without sending the request
+     */
+    async updateApiKeyRequestOpts(requestParameters: UpdateApiKeyOperationRequest): Promise<runtime.RequestOpts> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling updateApiKey().'
+            );
+        }
+
+        if (requestParameters['updateApiKeyRequest'] == null) {
+            throw new runtime.RequiredError(
+                'updateApiKeyRequest',
+                'Required parameter "updateApiKeyRequest" was null or undefined when calling updateApiKey().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("bearerAuth", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+
+        let urlPath = `/v1/api-keys/{id}`;
+        urlPath = urlPath.replace('{id}', encodeURIComponent(String(requestParameters['id'])));
+
+        return {
+            path: urlPath,
+            method: 'PATCH',
+            headers: headerParameters,
+            query: queryParameters,
+            body: UpdateApiKeyRequestToJSON(requestParameters['updateApiKeyRequest']),
+        };
+    }
+
+    /**
+     * Changes a key\'s label, scopes or expiry in place, without reissuing the secret.  **Every field is optional and absent means unchanged.** Renaming a key does not clear its expiry. For `expires_at` there are three distinct requests: omit the field to leave the expiry alone, send a timestamp to set one, and send an explicit `null` to remove one.  Scopes are replaced wholesale, not merged. This endpoint does not restrict which scopes you may grant, because `POST /v1/api-keys` never has either: a key with `tenant:admin` can already mint a key with any scope, so `tenant:admin` is root-equivalent for key management.  A revoked key cannot be updated. 
+     * Update an API key
+     */
+    async updateApiKeyRaw(requestParameters: UpdateApiKeyOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<APIKey>> {
+        const requestOptions = await this.updateApiKeyRequestOpts(requestParameters);
+        const response = await this.request(requestOptions, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => APIKeyFromJSON(jsonValue));
+    }
+
+    /**
+     * Changes a key\'s label, scopes or expiry in place, without reissuing the secret.  **Every field is optional and absent means unchanged.** Renaming a key does not clear its expiry. For `expires_at` there are three distinct requests: omit the field to leave the expiry alone, send a timestamp to set one, and send an explicit `null` to remove one.  Scopes are replaced wholesale, not merged. This endpoint does not restrict which scopes you may grant, because `POST /v1/api-keys` never has either: a key with `tenant:admin` can already mint a key with any scope, so `tenant:admin` is root-equivalent for key management.  A revoked key cannot be updated. 
+     * Update an API key
+     */
+    async updateApiKey(requestParameters: UpdateApiKeyOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<APIKey> {
+        const response = await this.updateApiKeyRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
 }
+
+/**
+ * @export
+ */
+export const ListApiKeysSortEnum = {
+    Label: 'label',
+    CreatedAt: 'created_at',
+    LastUsedAt: 'last_used_at',
+    ExpiresAt: 'expires_at'
+} as const;
+export type ListApiKeysSortEnum = typeof ListApiKeysSortEnum[keyof typeof ListApiKeysSortEnum];
+/**
+ * @export
+ */
+export const ListApiKeysOrderEnum = {
+    Asc: 'asc',
+    Desc: 'desc'
+} as const;
+export type ListApiKeysOrderEnum = typeof ListApiKeysOrderEnum[keyof typeof ListApiKeysOrderEnum];

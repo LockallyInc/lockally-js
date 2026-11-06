@@ -48,6 +48,11 @@ import {
     ProblemFromJSON,
     ProblemToJSON,
 } from '../models/Problem';
+import {
+    type TenantHealthReport,
+    TenantHealthReportFromJSON,
+    TenantHealthReportToJSON,
+} from '../models/TenantHealthReport';
 
 /**
  * DashboardApi - interface
@@ -175,12 +180,12 @@ export interface DashboardApiInterface {
      * @throws {RequiredError}
      * @memberof DashboardApiInterface
      */
-    getTenantHealthRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>>;
+    getTenantHealthRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TenantHealthReport>>;
 
     /**
      * Full tenant health report
      */
-    getTenantHealth(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object>;
+    getTenantHealth(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<TenantHealthReport>;
 
     /**
      * Creates request options for getUserInsights without sending the request
@@ -465,17 +470,17 @@ export class DashboardApi extends runtime.BaseAPI implements DashboardApiInterfa
     /**
      * Full tenant health report
      */
-    async getTenantHealthRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<object>> {
+    async getTenantHealthRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<TenantHealthReport>> {
         const requestOptions = await this.getTenantHealthRequestOpts();
         const response = await this.request(requestOptions, initOverrides);
 
-        return new runtime.JSONApiResponse<any>(response);
+        return new runtime.JSONApiResponse(response, (jsonValue) => TenantHealthReportFromJSON(jsonValue));
     }
 
     /**
      * Full tenant health report
      */
-    async getTenantHealth(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<object> {
+    async getTenantHealth(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<TenantHealthReport> {
         const response = await this.getTenantHealthRaw(initOverrides);
         return await response.value();
     }

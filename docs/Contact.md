@@ -20,6 +20,8 @@ Name | Type
 `status` | string
 `createdAt` | Date
 `updatedAt` | Date
+`externalSystem` | string
+`externalId` | string
 
 ## Example
 
@@ -42,6 +44,8 @@ const example = {
   "status": null,
   "createdAt": null,
   "updatedAt": null,
+  "externalSystem": null,
+  "externalId": null,
 } satisfies Contact
 
 console.log(example)

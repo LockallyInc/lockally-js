@@ -103,6 +103,18 @@ export interface Contact {
      * @memberof Contact
      */
     updatedAt: Date;
+    /**
+     * The system that owns this contact's external id. Absent on contacts made by hand.
+     * @type {string}
+     * @memberof Contact
+     */
+    externalSystem?: string;
+    /**
+     * The contact's id in `external_system`. Absent on contacts made by hand.
+     * @type {string}
+     * @memberof Contact
+     */
+    externalId?: string;
 }
 
 
@@ -155,6 +167,8 @@ export function ContactFromJSONTyped(json: any, ignoreDiscriminator: boolean): C
         'status': json['status'],
         'createdAt': (new Date(json['created_at'])),
         'updatedAt': (new Date(json['updated_at'])),
+        'externalSystem': json['external_system'] == null ? undefined : json['external_system'],
+        'externalId': json['external_id'] == null ? undefined : json['external_id'],
     };
 }
 
@@ -183,6 +197,8 @@ export function ContactToJSONTyped(value?: Contact | null, ignoreDiscriminator: 
         'status': value['status'],
         'created_at': value['createdAt'].toISOString(),
         'updated_at': value['updatedAt'].toISOString(),
+        'external_system': value['externalSystem'],
+        'external_id': value['externalId'],
     };
 }
 

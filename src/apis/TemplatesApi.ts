@@ -46,6 +46,11 @@ export interface GetTemplateRequest {
     id: string;
 }
 
+export interface ListTemplatesRequest {
+    sort?: ListTemplatesSortEnum;
+    order?: ListTemplatesOrderEnum;
+}
+
 export interface UpdateTemplateRequest {
     id: string;
     templateInput: TemplateInput;
@@ -129,24 +134,28 @@ export interface TemplatesApiInterface {
 
     /**
      * Creates request options for listTemplates without sending the request
+     * @param {'name' | 'created_at' | 'updated_at'} [sort] Field to order by. This list holds tens of rows per account, so every column is offered and none needs an index.
+     * @param {'asc' | 'desc'} [order] Defaults to asc for the default field and asc for any other. Always tie-broken on id, so the order is total.
      * @throws {RequiredError}
      * @memberof TemplatesApiInterface
      */
-    listTemplatesRequestOpts(): Promise<runtime.RequestOpts>;
+    listTemplatesRequestOpts(requestParameters: ListTemplatesRequest): Promise<runtime.RequestOpts>;
 
     /**
      * 
      * @summary List templates
+     * @param {'name' | 'created_at' | 'updated_at'} [sort] Field to order by. This list holds tens of rows per account, so every column is offered and none needs an index.
+     * @param {'asc' | 'desc'} [order] Defaults to asc for the default field and asc for any other. Always tie-broken on id, so the order is total.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof TemplatesApiInterface
      */
-    listTemplatesRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListTemplates200Response>>;
+    listTemplatesRaw(requestParameters: ListTemplatesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListTemplates200Response>>;
 
     /**
      * List templates
      */
-    listTemplates(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListTemplates200Response>;
+    listTemplates(requestParameters: ListTemplatesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListTemplates200Response>;
 
     /**
      * Creates request options for updateTemplate without sending the request
@@ -343,8 +352,16 @@ export class TemplatesApi extends runtime.BaseAPI implements TemplatesApiInterfa
     /**
      * Creates request options for listTemplates without sending the request
      */
-    async listTemplatesRequestOpts(): Promise<runtime.RequestOpts> {
+    async listTemplatesRequestOpts(requestParameters: ListTemplatesRequest): Promise<runtime.RequestOpts> {
         const queryParameters: any = {};
+
+        if (requestParameters['sort'] != null) {
+            queryParameters['sort'] = requestParameters['sort'];
+        }
+
+        if (requestParameters['order'] != null) {
+            queryParameters['order'] = requestParameters['order'];
+        }
 
         const headerParameters: runtime.HTTPHeaders = {};
 
@@ -370,8 +387,8 @@ export class TemplatesApi extends runtime.BaseAPI implements TemplatesApiInterfa
     /**
      * List templates
      */
-    async listTemplatesRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListTemplates200Response>> {
-        const requestOptions = await this.listTemplatesRequestOpts();
+    async listTemplatesRaw(requestParameters: ListTemplatesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListTemplates200Response>> {
+        const requestOptions = await this.listTemplatesRequestOpts(requestParameters);
         const response = await this.request(requestOptions, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => ListTemplates200ResponseFromJSON(jsonValue));
@@ -380,8 +397,8 @@ export class TemplatesApi extends runtime.BaseAPI implements TemplatesApiInterfa
     /**
      * List templates
      */
-    async listTemplates(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListTemplates200Response> {
-        const response = await this.listTemplatesRaw(initOverrides);
+    async listTemplates(requestParameters: ListTemplatesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListTemplates200Response> {
+        const response = await this.listTemplatesRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -449,3 +466,21 @@ export class TemplatesApi extends runtime.BaseAPI implements TemplatesApiInterfa
     }
 
 }
+
+/**
+ * @export
+ */
+export const ListTemplatesSortEnum = {
+    Name: 'name',
+    CreatedAt: 'created_at',
+    UpdatedAt: 'updated_at'
+} as const;
+export type ListTemplatesSortEnum = typeof ListTemplatesSortEnum[keyof typeof ListTemplatesSortEnum];
+/**
+ * @export
+ */
+export const ListTemplatesOrderEnum = {
+    Asc: 'asc',
+    Desc: 'desc'
+} as const;
+export type ListTemplatesOrderEnum = typeof ListTemplatesOrderEnum[keyof typeof ListTemplatesOrderEnum];

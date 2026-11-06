@@ -33,6 +33,20 @@ export interface SendEmailBatchRequest {
      * @memberof SendEmailBatchRequest
      */
     messages: Array<SendMessage>;
+    /**
+     * Template variables every message in the batch inherits.
+     * Each message's own `variables` override these key by key,
+     * so shared values are written once and per-recipient ones
+     * stay per-recipient.
+     * 
+     * Without this, a 500-message batch repeats every shared
+     * variable 500 times: most of the payload, and 500 places for
+     * one of them to differ by a typo.
+     * 
+     * @type {{ [key: string]: string; }}
+     * @memberof SendEmailBatchRequest
+     */
+    variables?: { [key: string]: string; };
 }
 
 /**
@@ -54,6 +68,7 @@ export function SendEmailBatchRequestFromJSONTyped(json: any, ignoreDiscriminato
     return {
         
         'messages': ((json['messages'] as Array<any>).map(SendMessageFromJSON)),
+        'variables': json['variables'] == null ? undefined : json['variables'],
     };
 }
 
@@ -69,6 +84,7 @@ export function SendEmailBatchRequestToJSONTyped(value?: SendEmailBatchRequest |
     return {
         
         'messages': ((value['messages'] as Array<any>).map(SendMessageToJSON)),
+        'variables': value['variables'],
     };
 }
 

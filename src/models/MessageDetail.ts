@@ -87,6 +87,18 @@ export interface MessageDetail {
      */
     sizeBytes?: number;
     /**
+     * The sender's own key/value from the send request. Always present; `{}` when none was set.
+     * @type {{ [key: string]: string; }}
+     * @memberof MessageDetail
+     */
+    metadata?: { [key: string]: string; };
+    /**
+     * Grouping labels, lowercased and deduplicated. Always present; `[]` when none were set.
+     * @type {Array<string>}
+     * @memberof MessageDetail
+     */
+    tags?: Array<string>;
+    /**
      * 
      * @type {string}
      * @memberof MessageDetail
@@ -181,6 +193,8 @@ export function MessageDetailFromJSONTyped(json: any, ignoreDiscriminator: boole
         'updatedAt': (new Date(json['updated_at'])),
         'bounceReason': json['bounce_reason'] == null ? undefined : json['bounce_reason'],
         'sizeBytes': json['size_bytes'] == null ? undefined : json['size_bytes'],
+        'metadata': json['metadata'] == null ? undefined : json['metadata'],
+        'tags': json['tags'] == null ? undefined : json['tags'],
         'from': json['from'] == null ? undefined : json['from'],
         'to': json['to'] == null ? undefined : json['to'],
         'cc': json['cc'] == null ? undefined : json['cc'],
@@ -213,6 +227,8 @@ export function MessageDetailToJSONTyped(value?: MessageDetail | null, ignoreDis
         'updated_at': value['updatedAt'].toISOString(),
         'bounce_reason': value['bounceReason'],
         'size_bytes': value['sizeBytes'],
+        'metadata': value['metadata'],
+        'tags': value['tags'],
         'from': value['from'],
         'to': value['to'],
         'cc': value['cc'],

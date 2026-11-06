@@ -31,6 +31,10 @@ docs/BatchLookupPublicKeys200ResponseDataInner.md
 docs/BatchResult.md
 docs/BillingApi.md
 docs/BillingStatus.md
+docs/BulkUpsertExternalContacts200Response.md
+docs/BulkUpsertExternalContacts200ResponseResultsInner.md
+docs/BulkUpsertExternalContactsRequest.md
+docs/BulkUpsertExternalContactsRequestContactsInner.md
 docs/Calendar.md
 docs/CalendarEvent.md
 docs/CalendarIntegration.md
@@ -89,6 +93,7 @@ docs/DraftResult.md
 docs/DraftsApi.md
 docs/EncryptionApi.md
 docs/ExportMailbox201Response.md
+docs/ExternalContactInput.md
 docs/GALSettings.md
 docs/GetAddOnStatus200Response.md
 docs/GetAuditSummary200Response.md
@@ -111,6 +116,8 @@ docs/GetDomainsStatus200Response.md
 docs/GetDomainsStatus200ResponseDomainsInner.md
 docs/GetDomainsStatus200ResponseDomainsInnerChecksInner.md
 docs/GetEncryptionKey200Response.md
+docs/GetEncryptionStatus200Response.md
+docs/GetEncryptionStatus200ResponseMailboxesInner.md
 docs/GetIPAssignment200Response.md
 docs/GetIntegrationsSummary200Response.md
 docs/GetIntegrationsSummary200ResponseApiKeysInner.md
@@ -171,6 +178,8 @@ docs/MessageStatsRates.md
 docs/MessageStatsWindow.md
 docs/Migration.md
 docs/MigrationCredential.md
+docs/MigrationDNSCheck.md
+docs/MigrationDomainDNS.md
 docs/MigrationEvent.md
 docs/MigrationMailbox.md
 docs/MigrationProgress.md
@@ -186,6 +195,7 @@ docs/Resource.md
 docs/ResourcesApi.md
 docs/ReturnPath.md
 docs/ReturnPathCheck.md
+docs/RotateApiKeyRequest.md
 docs/RotateEncryptionKeyRequest.md
 docs/SendApi.md
 docs/SendEmail200Response.md
@@ -209,6 +219,8 @@ docs/TemplateInput.md
 docs/TemplatesApi.md
 docs/Tenant.md
 docs/TenantApi.md
+docs/TenantHealthCheck.md
+docs/TenantHealthReport.md
 docs/TestApi.md
 docs/Thread.md
 docs/ThreadClassification.md
@@ -217,8 +229,10 @@ docs/ThreadMessage.md
 docs/ThreadMessageBody.md
 docs/ThreadMessageBodyBody.md
 docs/ThreadSummary.md
+docs/TrackingPolicy.md
 docs/UnitBundle.md
 docs/UpdateAdminRequest.md
+docs/UpdateApiKeyRequest.md
 docs/UpdateCalendarEventRequest.md
 docs/UpdateCalendarIntegrationRequest.md
 docs/UpdateCalendarMemberRequest.md
@@ -232,6 +246,7 @@ docs/UpdateMailboxRequest.md
 docs/UpdateMigrationMailboxRequest.md
 docs/UpdateMigrationRequest.md
 docs/UpdateResourceRequest.md
+docs/UpdateTrackingPolicyRequest.md
 docs/UpdateUserRequest.md
 docs/UpdateWebhookRequest.md
 docs/User.md
@@ -298,6 +313,10 @@ src/models/BatchLookupPublicKeys200Response.ts
 src/models/BatchLookupPublicKeys200ResponseDataInner.ts
 src/models/BatchResult.ts
 src/models/BillingStatus.ts
+src/models/BulkUpsertExternalContacts200Response.ts
+src/models/BulkUpsertExternalContacts200ResponseResultsInner.ts
+src/models/BulkUpsertExternalContactsRequest.ts
+src/models/BulkUpsertExternalContactsRequestContactsInner.ts
 src/models/Calendar.ts
 src/models/CalendarEvent.ts
 src/models/CalendarIntegration.ts
@@ -347,6 +366,7 @@ src/models/Draft.ts
 src/models/DraftList.ts
 src/models/DraftResult.ts
 src/models/ExportMailbox201Response.ts
+src/models/ExternalContactInput.ts
 src/models/GALSettings.ts
 src/models/GetAddOnStatus200Response.ts
 src/models/GetAuditSummary200Response.ts
@@ -369,6 +389,8 @@ src/models/GetDomainsStatus200Response.ts
 src/models/GetDomainsStatus200ResponseDomainsInner.ts
 src/models/GetDomainsStatus200ResponseDomainsInnerChecksInner.ts
 src/models/GetEncryptionKey200Response.ts
+src/models/GetEncryptionStatus200Response.ts
+src/models/GetEncryptionStatus200ResponseMailboxesInner.ts
 src/models/GetIPAssignment200Response.ts
 src/models/GetIntegrationsSummary200Response.ts
 src/models/GetIntegrationsSummary200ResponseApiKeysInner.ts
@@ -426,6 +448,8 @@ src/models/MessageStatsRates.ts
 src/models/MessageStatsWindow.ts
 src/models/Migration.ts
 src/models/MigrationCredential.ts
+src/models/MigrationDNSCheck.ts
+src/models/MigrationDomainDNS.ts
 src/models/MigrationEvent.ts
 src/models/MigrationMailbox.ts
 src/models/MigrationProgress.ts
@@ -439,6 +463,7 @@ src/models/ReplaceDistributionListMembersRequest.ts
 src/models/Resource.ts
 src/models/ReturnPath.ts
 src/models/ReturnPathCheck.ts
+src/models/RotateApiKeyRequest.ts
 src/models/RotateEncryptionKeyRequest.ts
 src/models/SendEmail200Response.ts
 src/models/SendEmail202Response.ts
@@ -457,6 +482,8 @@ src/models/Suppression.ts
 src/models/Template.ts
 src/models/TemplateInput.ts
 src/models/Tenant.ts
+src/models/TenantHealthCheck.ts
+src/models/TenantHealthReport.ts
 src/models/Thread.ts
 src/models/ThreadClassification.ts
 src/models/ThreadList.ts
@@ -464,8 +491,10 @@ src/models/ThreadMessage.ts
 src/models/ThreadMessageBody.ts
 src/models/ThreadMessageBodyBody.ts
 src/models/ThreadSummary.ts
+src/models/TrackingPolicy.ts
 src/models/UnitBundle.ts
 src/models/UpdateAdminRequest.ts
+src/models/UpdateApiKeyRequest.ts
 src/models/UpdateCalendarEventRequest.ts
 src/models/UpdateCalendarIntegrationRequest.ts
 src/models/UpdateCalendarMemberRequest.ts
@@ -479,6 +508,7 @@ src/models/UpdateMailboxRequest.ts
 src/models/UpdateMigrationMailboxRequest.ts
 src/models/UpdateMigrationRequest.ts
 src/models/UpdateResourceRequest.ts
+src/models/UpdateTrackingPolicyRequest.ts
 src/models/UpdateUserRequest.ts
 src/models/UpdateWebhookRequest.ts
 src/models/User.ts

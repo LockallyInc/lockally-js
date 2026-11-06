@@ -12,6 +12,11 @@ Name | Type
 `encryptedPrivateKey` | string
 `kdfParams` | object
 `version` | number
+`createdAt` | Date
+`rotatedAt` | Date
+`hasRecovery` | boolean
+`recoverySetAt` | Date
+`recoveryBlob` | string
 
 ## Example
 
@@ -26,6 +31,11 @@ const example = {
   "encryptedPrivateKey": null,
   "kdfParams": null,
   "version": null,
+  "createdAt": null,
+  "rotatedAt": null,
+  "hasRecovery": null,
+  "recoverySetAt": null,
+  "recoveryBlob": null,
 } satisfies GetEncryptionKey200Response
 
 console.log(example)

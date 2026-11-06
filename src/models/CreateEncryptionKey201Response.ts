@@ -37,6 +37,12 @@ export interface CreateEncryptionKey201Response {
      * @memberof CreateEncryptionKey201Response
      */
     createdAt?: Date;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof CreateEncryptionKey201Response
+     */
+    replacedOld?: boolean;
 }
 
 /**
@@ -59,6 +65,7 @@ export function CreateEncryptionKey201ResponseFromJSONTyped(json: any, ignoreDis
         'id': json['id'] == null ? undefined : json['id'],
         'mailboxId': json['mailbox_id'] == null ? undefined : json['mailbox_id'],
         'createdAt': json['created_at'] == null ? undefined : (new Date(json['created_at'])),
+        'replacedOld': json['replaced_old'] == null ? undefined : json['replaced_old'],
     };
 }
 
@@ -76,6 +83,7 @@ export function CreateEncryptionKey201ResponseToJSONTyped(value?: CreateEncrypti
         'id': value['id'],
         'mailbox_id': value['mailboxId'],
         'created_at': value['createdAt'] == null ? value['createdAt'] : value['createdAt'].toISOString(),
+        'replaced_old': value['replacedOld'],
     };
 }
 
