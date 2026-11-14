@@ -7,16 +7,12 @@ All URIs are relative to *https://api.lockally.com*
 | [**addSharedMember**](MailboxesApi.md#addsharedmemberoperation) | **POST** /v1/mailboxes/{email}/members | Add a shared mailbox member |
 | [**createMailbox**](MailboxesApi.md#createmailboxoperation) | **POST** /v1/mailboxes | Create a mailbox |
 | [**deleteMailbox**](MailboxesApi.md#deletemailbox) | **DELETE** /v1/mailboxes/{email} | Soft-delete a mailbox |
-| [**deleteVacationResponder**](MailboxesApi.md#deletevacationresponder) | **DELETE** /v1/mailboxes/{email}/vacation | Remove the vacation responder |
 | [**downloadMailboxExport**](MailboxesApi.md#downloadmailboxexport) | **GET** /v1/mailboxes/{email}/export/download | Download a previously-issued mailbox export |
 | [**exportMailbox**](MailboxesApi.md#exportmailbox) | **POST** /v1/mailboxes/{email}/export | Request a mailbox export |
 | [**getMailbox**](MailboxesApi.md#getmailbox) | **GET** /v1/mailboxes/{email} | Get a mailbox |
-| [**getVacationResponder**](MailboxesApi.md#getvacationresponder) | **GET** /v1/mailboxes/{email}/vacation | Get the vacation responder |
 | [**listMailboxes**](MailboxesApi.md#listmailboxes) | **GET** /v1/mailboxes | List mailboxes |
 | [**listSharedMembers**](MailboxesApi.md#listsharedmembers) | **GET** /v1/mailboxes/{email}/members | List shared mailbox members |
-| [**listVacationResponders**](MailboxesApi.md#listvacationresponders) | **GET** /v1/vacation | List all vacation responders |
 | [**removeSharedMember**](MailboxesApi.md#removesharedmember) | **DELETE** /v1/mailboxes/{email}/members/{memberEmail} | Remove a shared mailbox member |
-| [**setVacationResponder**](MailboxesApi.md#setvacationresponderoperation) | **PUT** /v1/mailboxes/{email}/vacation | Set the vacation responder |
 | [**updateMailbox**](MailboxesApi.md#updatemailboxoperation) | **PATCH** /v1/mailboxes/{email} | Update a mailbox |
 
 
@@ -248,79 +244,6 @@ example().catch(console.error);
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
 
-## deleteVacationResponder
-
-> deleteVacationResponder(email)
-
-Remove the vacation responder
-
-Idempotent, 204 whether or not a row existed.
-
-### Example
-
-```ts
-import {
-  Configuration,
-  MailboxesApi,
-} from 'lockally';
-import type { DeleteVacationResponderRequest } from 'lockally';
-
-async function example() {
-  console.log("🚀 Testing lockally SDK...");
-  const config = new Configuration({ 
-    // Configure HTTP bearer authorization: bearerAuth
-    accessToken: "YOUR BEARER TOKEN",
-  });
-  const api = new MailboxesApi(config);
-
-  const body = {
-    // string
-    email: email_example,
-  } satisfies DeleteVacationResponderRequest;
-
-  try {
-    const data = await api.deleteVacationResponder(body);
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Run the test
-example().catch(console.error);
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **email** | `string` |  | [Defaults to `undefined`] |
-
-### Return type
-
-`void` (Empty response body)
-
-### Authorization
-
-[bearerAuth](../README.md#bearerAuth)
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: `application/problem+json`
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **204** | Deleted. |  -  |
-| **401** | Missing, malformed, or invalid API key. |  -  |
-| **403** | API key lacks the required scope. |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
-
-
 ## downloadMailboxExport
 
 > Blob downloadMailboxExport(email, token)
@@ -540,80 +463,6 @@ example().catch(console.error);
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
 
-## getVacationResponder
-
-> VacationResponder getVacationResponder(email)
-
-Get the vacation responder
-
-Returns the stored vacation rule or 404 if none is set.
-
-### Example
-
-```ts
-import {
-  Configuration,
-  MailboxesApi,
-} from 'lockally';
-import type { GetVacationResponderRequest } from 'lockally';
-
-async function example() {
-  console.log("🚀 Testing lockally SDK...");
-  const config = new Configuration({ 
-    // Configure HTTP bearer authorization: bearerAuth
-    accessToken: "YOUR BEARER TOKEN",
-  });
-  const api = new MailboxesApi(config);
-
-  const body = {
-    // string
-    email: email_example,
-  } satisfies GetVacationResponderRequest;
-
-  try {
-    const data = await api.getVacationResponder(body);
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Run the test
-example().catch(console.error);
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **email** | `string` |  | [Defaults to `undefined`] |
-
-### Return type
-
-[**VacationResponder**](VacationResponder.md)
-
-### Authorization
-
-[bearerAuth](../README.md#bearerAuth)
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: `application/json`, `application/problem+json`
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | Vacation responder. |  -  |
-| **401** | Missing, malformed, or invalid API key. |  -  |
-| **403** | API key lacks the required scope. |  -  |
-| **404** | Resource not found under the calling tenant. |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
-
-
 ## listMailboxes
 
 > ListMailboxes200Response listMailboxes(limit)
@@ -759,71 +608,6 @@ example().catch(console.error);
 [[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
 
 
-## listVacationResponders
-
-> ListVacationResponders200Response listVacationResponders()
-
-List all vacation responders
-
-Returns every vacation responder for the calling tenant.
-
-### Example
-
-```ts
-import {
-  Configuration,
-  MailboxesApi,
-} from 'lockally';
-import type { ListVacationRespondersRequest } from 'lockally';
-
-async function example() {
-  console.log("🚀 Testing lockally SDK...");
-  const config = new Configuration({ 
-    // Configure HTTP bearer authorization: bearerAuth
-    accessToken: "YOUR BEARER TOKEN",
-  });
-  const api = new MailboxesApi(config);
-
-  try {
-    const data = await api.listVacationResponders();
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Run the test
-example().catch(console.error);
-```
-
-### Parameters
-
-This endpoint does not need any parameter.
-
-### Return type
-
-[**ListVacationResponders200Response**](ListVacationResponders200Response.md)
-
-### Authorization
-
-[bearerAuth](../README.md#bearerAuth)
-
-### HTTP request headers
-
-- **Content-Type**: Not defined
-- **Accept**: `application/json`, `application/problem+json`
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | List. |  -  |
-| **401** | Missing, malformed, or invalid API key. |  -  |
-| **403** | API key lacks the required scope. |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
-
-
 ## removeSharedMember
 
 > removeSharedMember(email, memberEmail)
@@ -892,84 +676,6 @@ example().catch(console.error);
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
 | **204** | No content |  -  |
-| **401** | Missing, malformed, or invalid API key. |  -  |
-| **403** | API key lacks the required scope. |  -  |
-| **404** | Resource not found under the calling tenant. |  -  |
-
-[[Back to top]](#) [[Back to API list]](../README.md#api-endpoints) [[Back to Model list]](../README.md#models) [[Back to README]](../README.md)
-
-
-## setVacationResponder
-
-> VacationResponder setVacationResponder(email, setVacationResponderRequest)
-
-Set the vacation responder
-
-Upsert, same endpoint creates or replaces the rule. Clears &#x60;synced_at&#x60;; the rule is staged until a later sync pushes it to the mail server. 
-
-### Example
-
-```ts
-import {
-  Configuration,
-  MailboxesApi,
-} from 'lockally';
-import type { SetVacationResponderOperationRequest } from 'lockally';
-
-async function example() {
-  console.log("🚀 Testing lockally SDK...");
-  const config = new Configuration({ 
-    // Configure HTTP bearer authorization: bearerAuth
-    accessToken: "YOUR BEARER TOKEN",
-  });
-  const api = new MailboxesApi(config);
-
-  const body = {
-    // string
-    email: email_example,
-    // SetVacationResponderRequest
-    setVacationResponderRequest: ...,
-  } satisfies SetVacationResponderOperationRequest;
-
-  try {
-    const data = await api.setVacationResponder(body);
-    console.log(data);
-  } catch (error) {
-    console.error(error);
-  }
-}
-
-// Run the test
-example().catch(console.error);
-```
-
-### Parameters
-
-
-| Name | Type | Description  | Notes |
-|------------- | ------------- | ------------- | -------------|
-| **email** | `string` |  | [Defaults to `undefined`] |
-| **setVacationResponderRequest** | [SetVacationResponderRequest](SetVacationResponderRequest.md) |  | |
-
-### Return type
-
-[**VacationResponder**](VacationResponder.md)
-
-### Authorization
-
-[bearerAuth](../README.md#bearerAuth)
-
-### HTTP request headers
-
-- **Content-Type**: `application/json`
-- **Accept**: `application/json`, `application/problem+json`
-
-
-### HTTP response details
-| Status code | Description | Response headers |
-|-------------|-------------|------------------|
-| **200** | Saved. |  -  |
-| **400** | Malformed request. |  -  |
 | **401** | Missing, malformed, or invalid API key. |  -  |
 | **403** | API key lacks the required scope. |  -  |
 | **404** | Resource not found under the calling tenant. |  -  |

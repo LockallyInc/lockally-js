@@ -161,7 +161,6 @@ docs/ListSharedMembers200Response.md
 docs/ListSuppressions200Response.md
 docs/ListTemplates200Response.md
 docs/ListUsers200Response.md
-docs/ListVacationResponders200Response.md
 docs/ListWebhooks200Response.md
 docs/Mailbox.md
 docs/MailboxGrant.md
@@ -205,7 +204,6 @@ docs/SendEmailBatchRequest.md
 docs/SendEmailRequest.md
 docs/SendEmailRequestAttachmentsInner.md
 docs/SendMessage.md
-docs/SetVacationResponderRequest.md
 docs/SharedMember.md
 docs/SignupApi.md
 docs/SignupRequest.md
@@ -252,8 +250,6 @@ docs/UpdateWebhookRequest.md
 docs/User.md
 docs/UserEvent.md
 docs/UsersApi.md
-docs/VacationParams.md
-docs/VacationResponder.md
 docs/Webhook.md
 docs/WebhooksApi.md
 docs/Whoami.md
@@ -432,7 +428,6 @@ src/models/ListSharedMembers200Response.ts
 src/models/ListSuppressions200Response.ts
 src/models/ListTemplates200Response.ts
 src/models/ListUsers200Response.ts
-src/models/ListVacationResponders200Response.ts
 src/models/ListWebhooks200Response.ts
 src/models/Mailbox.ts
 src/models/MailboxGrant.ts
@@ -472,7 +467,6 @@ src/models/SendEmailBatchRequest.ts
 src/models/SendEmailRequest.ts
 src/models/SendEmailRequestAttachmentsInner.ts
 src/models/SendMessage.ts
-src/models/SetVacationResponderRequest.ts
 src/models/SharedMember.ts
 src/models/SignupRequest.ts
 src/models/SimulatedInbound.ts
@@ -513,8 +507,6 @@ src/models/UpdateUserRequest.ts
 src/models/UpdateWebhookRequest.ts
 src/models/User.ts
 src/models/UserEvent.ts
-src/models/VacationParams.ts
-src/models/VacationResponder.ts
 src/models/Webhook.ts
 src/models/Whoami.ts
 src/models/WhoamiKey.ts

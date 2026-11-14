@@ -1,8 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * lockally control plane
- * The lockally control plane lets integrators and direct customers manage everything except actual mail data flow (which uses standard JMAP / IMAP / SMTP-submission against the data plane endpoints).  **Authentication.** All `/v1/_*` endpoints require a Bearer API key in the `Authorization` header. Keys are formatted `lk_live_<8-char-prefix>_<32-char-secret>`, or `lk_test_<...>` for a test key. Create keys in the dashboard, or with `POST /v1/api-keys` using a key that holds `tenant:admin`.  The key\'s plan is checked on every request, so a key stops working if the account moves to a plan without API access, and works again if it moves back.  **Errors.** Failures return [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) `application/problem+json` documents.  **Scopes.** Each endpoint requires a specific scope on the presented key. Insufficient scope returns `403` with the required scope name in `detail`. 
+ * Lockally API
+ * Official Lockally SDK for JavaScript and TypeScript: send email and manage mailboxes, domains and webhooks through the Lockally API.  **Authentication.** All `/v1/_*` endpoints require a Bearer API key in the `Authorization` header. Keys are formatted `lk_live_<8-char-prefix>_<32-char-secret>`, or `lk_test_<...>` for a test key. Create keys in the dashboard, or with `POST /v1/api-keys` using a key that holds `tenant:admin`.  The key\'s plan is checked on every request, so a key stops working if the account moves to a plan without API access, and works again if it moves back.  **Errors.** Failures return [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) `application/problem+json` documents.  **Scopes.** Each endpoint requires a specific scope on the presented key. Insufficient scope returns `403` with the required scope name in `detail`. 
  *
  * The version of the OpenAPI document: 0.1.0
  * Contact: support@lockally.com
@@ -39,11 +39,6 @@ import {
     ListSharedMembers200ResponseToJSON,
 } from '../models/ListSharedMembers200Response';
 import {
-    type ListVacationResponders200Response,
-    ListVacationResponders200ResponseFromJSON,
-    ListVacationResponders200ResponseToJSON,
-} from '../models/ListVacationResponders200Response';
-import {
     type Mailbox,
     MailboxFromJSON,
     MailboxToJSON,
@@ -54,11 +49,6 @@ import {
     ProblemToJSON,
 } from '../models/Problem';
 import {
-    type SetVacationResponderRequest,
-    SetVacationResponderRequestFromJSON,
-    SetVacationResponderRequestToJSON,
-} from '../models/SetVacationResponderRequest';
-import {
     type SharedMember,
     SharedMemberFromJSON,
     SharedMemberToJSON,
@@ -68,11 +58,6 @@ import {
     UpdateMailboxRequestFromJSON,
     UpdateMailboxRequestToJSON,
 } from '../models/UpdateMailboxRequest';
-import {
-    type VacationResponder,
-    VacationResponderFromJSON,
-    VacationResponderToJSON,
-} from '../models/VacationResponder';
 
 export interface AddSharedMemberOperationRequest {
     email: string;
@@ -84,10 +69,6 @@ export interface CreateMailboxOperationRequest {
 }
 
 export interface DeleteMailboxRequest {
-    email: string;
-}
-
-export interface DeleteVacationResponderRequest {
     email: string;
 }
 
@@ -104,10 +85,6 @@ export interface GetMailboxRequest {
     email: string;
 }
 
-export interface GetVacationResponderRequest {
-    email: string;
-}
-
 export interface ListMailboxesRequest {
     limit?: number;
 }
@@ -119,11 +96,6 @@ export interface ListSharedMembersRequest {
 export interface RemoveSharedMemberRequest {
     email: string;
     memberEmail: string;
-}
-
-export interface SetVacationResponderOperationRequest {
-    email: string;
-    setVacationResponderRequest: SetVacationResponderRequest;
 }
 
 export interface UpdateMailboxOperationRequest {
@@ -212,30 +184,6 @@ export interface MailboxesApiInterface {
     deleteMailbox(requestParameters: DeleteMailboxRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
 
     /**
-     * Creates request options for deleteVacationResponder without sending the request
-     * @param {string} email 
-     * @throws {RequiredError}
-     * @memberof MailboxesApiInterface
-     */
-    deleteVacationResponderRequestOpts(requestParameters: DeleteVacationResponderRequest): Promise<runtime.RequestOpts>;
-
-    /**
-     * Idempotent, 204 whether or not a row existed.
-     * @summary Remove the vacation responder
-     * @param {string} email 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof MailboxesApiInterface
-     */
-    deleteVacationResponderRaw(requestParameters: DeleteVacationResponderRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>>;
-
-    /**
-     * Idempotent, 204 whether or not a row existed.
-     * Remove the vacation responder
-     */
-    deleteVacationResponder(requestParameters: DeleteVacationResponderRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
-
-    /**
      * Creates request options for downloadMailboxExport without sending the request
      * @param {string} email 
      * @param {string} token 
@@ -309,30 +257,6 @@ export interface MailboxesApiInterface {
     getMailbox(requestParameters: GetMailboxRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Mailbox>;
 
     /**
-     * Creates request options for getVacationResponder without sending the request
-     * @param {string} email 
-     * @throws {RequiredError}
-     * @memberof MailboxesApiInterface
-     */
-    getVacationResponderRequestOpts(requestParameters: GetVacationResponderRequest): Promise<runtime.RequestOpts>;
-
-    /**
-     * Returns the stored vacation rule or 404 if none is set.
-     * @summary Get the vacation responder
-     * @param {string} email 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof MailboxesApiInterface
-     */
-    getVacationResponderRaw(requestParameters: GetVacationResponderRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<VacationResponder>>;
-
-    /**
-     * Returns the stored vacation rule or 404 if none is set.
-     * Get the vacation responder
-     */
-    getVacationResponder(requestParameters: GetVacationResponderRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<VacationResponder>;
-
-    /**
      * Creates request options for listMailboxes without sending the request
      * @param {number} [limit] 
      * @throws {RequiredError}
@@ -380,28 +304,6 @@ export interface MailboxesApiInterface {
     listSharedMembers(requestParameters: ListSharedMembersRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListSharedMembers200Response>;
 
     /**
-     * Creates request options for listVacationResponders without sending the request
-     * @throws {RequiredError}
-     * @memberof MailboxesApiInterface
-     */
-    listVacationRespondersRequestOpts(): Promise<runtime.RequestOpts>;
-
-    /**
-     * Returns every vacation responder for the calling tenant.
-     * @summary List all vacation responders
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof MailboxesApiInterface
-     */
-    listVacationRespondersRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListVacationResponders200Response>>;
-
-    /**
-     * Returns every vacation responder for the calling tenant.
-     * List all vacation responders
-     */
-    listVacationResponders(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListVacationResponders200Response>;
-
-    /**
      * Creates request options for removeSharedMember without sending the request
      * @param {string} email 
      * @param {string} memberEmail 
@@ -425,32 +327,6 @@ export interface MailboxesApiInterface {
      * Remove a shared mailbox member
      */
     removeSharedMember(requestParameters: RemoveSharedMemberRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void>;
-
-    /**
-     * Creates request options for setVacationResponder without sending the request
-     * @param {string} email 
-     * @param {SetVacationResponderRequest} setVacationResponderRequest 
-     * @throws {RequiredError}
-     * @memberof MailboxesApiInterface
-     */
-    setVacationResponderRequestOpts(requestParameters: SetVacationResponderOperationRequest): Promise<runtime.RequestOpts>;
-
-    /**
-     * Upsert, same endpoint creates or replaces the rule. Clears `synced_at`; the rule is staged until a later sync pushes it to the mail server. 
-     * @summary Set the vacation responder
-     * @param {string} email 
-     * @param {SetVacationResponderRequest} setVacationResponderRequest 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof MailboxesApiInterface
-     */
-    setVacationResponderRaw(requestParameters: SetVacationResponderOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<VacationResponder>>;
-
-    /**
-     * Upsert, same endpoint creates or replaces the rule. Clears `synced_at`; the rule is staged until a later sync pushes it to the mail server. 
-     * Set the vacation responder
-     */
-    setVacationResponder(requestParameters: SetVacationResponderOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<VacationResponder>;
 
     /**
      * Creates request options for updateMailbox without sending the request
@@ -660,60 +536,6 @@ export class MailboxesApi extends runtime.BaseAPI implements MailboxesApiInterfa
     }
 
     /**
-     * Creates request options for deleteVacationResponder without sending the request
-     */
-    async deleteVacationResponderRequestOpts(requestParameters: DeleteVacationResponderRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['email'] == null) {
-            throw new runtime.RequiredError(
-                'email',
-                'Required parameter "email" was null or undefined when calling deleteVacationResponder().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            const token = this.configuration.accessToken;
-            const tokenString = await token("bearerAuth", []);
-
-            if (tokenString) {
-                headerParameters["Authorization"] = `Bearer ${tokenString}`;
-            }
-        }
-
-        let urlPath = `/v1/mailboxes/{email}/vacation`;
-        urlPath = urlPath.replace('{email}', encodeURIComponent(String(requestParameters['email'])));
-
-        return {
-            path: urlPath,
-            method: 'DELETE',
-            headers: headerParameters,
-            query: queryParameters,
-        };
-    }
-
-    /**
-     * Idempotent, 204 whether or not a row existed.
-     * Remove the vacation responder
-     */
-    async deleteVacationResponderRaw(requestParameters: DeleteVacationResponderRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
-        const requestOptions = await this.deleteVacationResponderRequestOpts(requestParameters);
-        const response = await this.request(requestOptions, initOverrides);
-
-        return new runtime.VoidApiResponse(response);
-    }
-
-    /**
-     * Idempotent, 204 whether or not a row existed.
-     * Remove the vacation responder
-     */
-    async deleteVacationResponder(requestParameters: DeleteVacationResponderRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.deleteVacationResponderRaw(requestParameters, initOverrides);
-    }
-
-    /**
      * Creates request options for downloadMailboxExport without sending the request
      */
     async downloadMailboxExportRequestOpts(requestParameters: DownloadMailboxExportRequest): Promise<runtime.RequestOpts> {
@@ -880,61 +702,6 @@ export class MailboxesApi extends runtime.BaseAPI implements MailboxesApiInterfa
     }
 
     /**
-     * Creates request options for getVacationResponder without sending the request
-     */
-    async getVacationResponderRequestOpts(requestParameters: GetVacationResponderRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['email'] == null) {
-            throw new runtime.RequiredError(
-                'email',
-                'Required parameter "email" was null or undefined when calling getVacationResponder().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            const token = this.configuration.accessToken;
-            const tokenString = await token("bearerAuth", []);
-
-            if (tokenString) {
-                headerParameters["Authorization"] = `Bearer ${tokenString}`;
-            }
-        }
-
-        let urlPath = `/v1/mailboxes/{email}/vacation`;
-        urlPath = urlPath.replace('{email}', encodeURIComponent(String(requestParameters['email'])));
-
-        return {
-            path: urlPath,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        };
-    }
-
-    /**
-     * Returns the stored vacation rule or 404 if none is set.
-     * Get the vacation responder
-     */
-    async getVacationResponderRaw(requestParameters: GetVacationResponderRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<VacationResponder>> {
-        const requestOptions = await this.getVacationResponderRequestOpts(requestParameters);
-        const response = await this.request(requestOptions, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => VacationResponderFromJSON(jsonValue));
-    }
-
-    /**
-     * Returns the stored vacation rule or 404 if none is set.
-     * Get the vacation responder
-     */
-    async getVacationResponder(requestParameters: GetVacationResponderRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<VacationResponder> {
-        const response = await this.getVacationResponderRaw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
      * Creates request options for listMailboxes without sending the request
      */
     async listMailboxesRequestOpts(requestParameters: ListMailboxesRequest): Promise<runtime.RequestOpts> {
@@ -1039,53 +806,6 @@ export class MailboxesApi extends runtime.BaseAPI implements MailboxesApiInterfa
     }
 
     /**
-     * Creates request options for listVacationResponders without sending the request
-     */
-    async listVacationRespondersRequestOpts(): Promise<runtime.RequestOpts> {
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        if (this.configuration && this.configuration.accessToken) {
-            const token = this.configuration.accessToken;
-            const tokenString = await token("bearerAuth", []);
-
-            if (tokenString) {
-                headerParameters["Authorization"] = `Bearer ${tokenString}`;
-            }
-        }
-
-        let urlPath = `/v1/vacation`;
-
-        return {
-            path: urlPath,
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        };
-    }
-
-    /**
-     * Returns every vacation responder for the calling tenant.
-     * List all vacation responders
-     */
-    async listVacationRespondersRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<ListVacationResponders200Response>> {
-        const requestOptions = await this.listVacationRespondersRequestOpts();
-        const response = await this.request(requestOptions, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => ListVacationResponders200ResponseFromJSON(jsonValue));
-    }
-
-    /**
-     * Returns every vacation responder for the calling tenant.
-     * List all vacation responders
-     */
-    async listVacationResponders(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<ListVacationResponders200Response> {
-        const response = await this.listVacationRespondersRaw(initOverrides);
-        return await response.value();
-    }
-
-    /**
      * Creates request options for removeSharedMember without sending the request
      */
     async removeSharedMemberRequestOpts(requestParameters: RemoveSharedMemberRequest): Promise<runtime.RequestOpts> {
@@ -1143,71 +863,6 @@ export class MailboxesApi extends runtime.BaseAPI implements MailboxesApiInterfa
      */
     async removeSharedMember(requestParameters: RemoveSharedMemberRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
         await this.removeSharedMemberRaw(requestParameters, initOverrides);
-    }
-
-    /**
-     * Creates request options for setVacationResponder without sending the request
-     */
-    async setVacationResponderRequestOpts(requestParameters: SetVacationResponderOperationRequest): Promise<runtime.RequestOpts> {
-        if (requestParameters['email'] == null) {
-            throw new runtime.RequiredError(
-                'email',
-                'Required parameter "email" was null or undefined when calling setVacationResponder().'
-            );
-        }
-
-        if (requestParameters['setVacationResponderRequest'] == null) {
-            throw new runtime.RequiredError(
-                'setVacationResponderRequest',
-                'Required parameter "setVacationResponderRequest" was null or undefined when calling setVacationResponder().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        headerParameters['Content-Type'] = 'application/json';
-
-        if (this.configuration && this.configuration.accessToken) {
-            const token = this.configuration.accessToken;
-            const tokenString = await token("bearerAuth", []);
-
-            if (tokenString) {
-                headerParameters["Authorization"] = `Bearer ${tokenString}`;
-            }
-        }
-
-        let urlPath = `/v1/mailboxes/{email}/vacation`;
-        urlPath = urlPath.replace('{email}', encodeURIComponent(String(requestParameters['email'])));
-
-        return {
-            path: urlPath,
-            method: 'PUT',
-            headers: headerParameters,
-            query: queryParameters,
-            body: SetVacationResponderRequestToJSON(requestParameters['setVacationResponderRequest']),
-        };
-    }
-
-    /**
-     * Upsert, same endpoint creates or replaces the rule. Clears `synced_at`; the rule is staged until a later sync pushes it to the mail server. 
-     * Set the vacation responder
-     */
-    async setVacationResponderRaw(requestParameters: SetVacationResponderOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<VacationResponder>> {
-        const requestOptions = await this.setVacationResponderRequestOpts(requestParameters);
-        const response = await this.request(requestOptions, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => VacationResponderFromJSON(jsonValue));
-    }
-
-    /**
-     * Upsert, same endpoint creates or replaces the rule. Clears `synced_at`; the rule is staged until a later sync pushes it to the mail server. 
-     * Set the vacation responder
-     */
-    async setVacationResponder(requestParameters: SetVacationResponderOperationRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<VacationResponder> {
-        const response = await this.setVacationResponderRaw(requestParameters, initOverrides);
-        return await response.value();
     }
 
     /**
