@@ -62,6 +62,7 @@ export const CreateApiKeyRequestScopesEnum = {
     MailboxesWrite: 'mailboxes:write',
     DirectorySync: 'directory:sync',
     InboxesRead: 'inboxes:read',
+    InboxesDraft: 'inboxes:draft',
     InboxesWrite: 'inboxes:write',
     SendRead: 'send:read',
     SendWrite: 'send:write',

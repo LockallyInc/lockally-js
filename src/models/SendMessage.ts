@@ -28,11 +28,17 @@ import {
  */
 export interface SendMessage {
     /**
-     * 
+     * Sender address, alone or as `Acme Orders <orders@acme.com>`.
      * @type {string}
      * @memberof SendMessage
      */
     from: string;
+    /**
+     * Display name shown next to `from`. Must match a name given in `from`. Cannot contain `@` or control characters.
+     * @type {string}
+     * @memberof SendMessage
+     */
+    fromName?: string;
     /**
      * 
      * @type {Array<string>}
@@ -139,6 +145,7 @@ export function SendMessageFromJSONTyped(json: any, ignoreDiscriminator: boolean
     return {
         
         'from': json['from'],
+        'fromName': json['from_name'] == null ? undefined : json['from_name'],
         'to': json['to'],
         'cc': json['cc'] == null ? undefined : json['cc'],
         'bcc': json['bcc'] == null ? undefined : json['bcc'],
@@ -168,6 +175,7 @@ export function SendMessageToJSONTyped(value?: SendMessage | null, ignoreDiscrim
     return {
         
         'from': value['from'],
+        'from_name': value['fromName'],
         'to': value['to'],
         'cc': value['cc'],
         'bcc': value['bcc'],

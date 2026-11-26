@@ -80,7 +80,7 @@ export interface AiApiInterface {
     createAiUnitsCheckoutRequestOpts(): Promise<runtime.RequestOpts>;
 
     /**
-     * Body: {\"bundle\": \"100|500|2000\"}. One classification = one unit; bundles expire after 6 months. Admin session required. 503 until Paystack billing is configured.
+     * Body: {\"bundle\": \"300|1500|6000\"}. One classification = one unit; bundles expire after 3 months. Admin session required. 503 until Paystack billing is configured; 409 while prepaid AI units are not available on this server.
      * @summary Buy prepaid AI units
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -89,7 +89,7 @@ export interface AiApiInterface {
     createAiUnitsCheckoutRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CreateAiUnitsCheckout200Response>>;
 
     /**
-     * Body: {\"bundle\": \"100|500|2000\"}. One classification = one unit; bundles expire after 6 months. Admin session required. 503 until Paystack billing is configured.
+     * Body: {\"bundle\": \"300|1500|6000\"}. One classification = one unit; bundles expire after 3 months. Admin session required. 503 until Paystack billing is configured; 409 while prepaid AI units are not available on this server.
      * Buy prepaid AI units
      */
     createAiUnitsCheckout(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateAiUnitsCheckout200Response>;
@@ -232,7 +232,7 @@ export class AiApi extends runtime.BaseAPI implements AiApiInterface {
     }
 
     /**
-     * Body: {\"bundle\": \"100|500|2000\"}. One classification = one unit; bundles expire after 6 months. Admin session required. 503 until Paystack billing is configured.
+     * Body: {\"bundle\": \"300|1500|6000\"}. One classification = one unit; bundles expire after 3 months. Admin session required. 503 until Paystack billing is configured; 409 while prepaid AI units are not available on this server.
      * Buy prepaid AI units
      */
     async createAiUnitsCheckoutRaw(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CreateAiUnitsCheckout200Response>> {
@@ -243,7 +243,7 @@ export class AiApi extends runtime.BaseAPI implements AiApiInterface {
     }
 
     /**
-     * Body: {\"bundle\": \"100|500|2000\"}. One classification = one unit; bundles expire after 6 months. Admin session required. 503 until Paystack billing is configured.
+     * Body: {\"bundle\": \"300|1500|6000\"}. One classification = one unit; bundles expire after 3 months. Admin session required. 503 until Paystack billing is configured; 409 while prepaid AI units are not available on this server.
      * Buy prepaid AI units
      */
     async createAiUnitsCheckout(initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CreateAiUnitsCheckout200Response> {

@@ -7,6 +7,7 @@
 Name | Type
 ------------ | -------------
 `from` | string
+`fromName` | string
 `to` | Array&lt;string&gt;
 `cc` | Array&lt;string&gt;
 `bcc` | Array&lt;string&gt;
@@ -34,6 +35,7 @@ import type { SendEmailRequest } from 'lockally'
 // TODO: Update the object below with actual values
 const example = {
   "from": null,
+  "fromName": null,
   "to": null,
   "cc": null,
   "bcc": null,

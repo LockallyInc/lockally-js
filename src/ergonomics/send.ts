@@ -17,7 +17,10 @@ import { LockallyApiError } from "./errors";
 
 /** The message. Mirrors SendEmailRequest, which the generator owns. */
 export interface SendMessage {
+  /** The sender address, alone or as "Acme Orders <orders@acme.com>". */
   from: string;
+  /** Display name shown next to `from`. Must match a name given in `from`. */
+  fromName?: string;
   to: string | string[];
   subject?: string;
   text?: string;
@@ -73,6 +76,7 @@ function list(v: string | string[] | undefined): string[] | undefined {
 function toWire(m: SendMessage): Record<string, unknown> {
   const body: Record<string, unknown> = {
     from: m.from,
+    from_name: m.fromName,
     to: list(m.to),
     subject: m.subject,
     text: m.text,

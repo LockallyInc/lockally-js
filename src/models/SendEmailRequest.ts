@@ -28,11 +28,17 @@ import {
  */
 export interface SendEmailRequest {
     /**
-     * 
+     * Sender address, alone (`orders@acme.com`) or with a display name (`Acme Orders <orders@acme.com>`). Only the address is checked against your sender rules and used as the envelope sender.
      * @type {string}
      * @memberof SendEmailRequest
      */
     from: string;
+    /**
+     * Display name recipients see next to `from`, e.g. `Acme Orders`. The same as giving it in `from`; if you do both, the names must match (400 `Conflicting from name`). Cannot contain `@` or control characters. Encoded and quoted for you, so accents, commas and quotes are safe.
+     * @type {string}
+     * @memberof SendEmailRequest
+     */
+    fromName?: string;
     /**
      * 
      * @type {Array<string>}
@@ -205,6 +211,7 @@ export function SendEmailRequestFromJSONTyped(json: any, ignoreDiscriminator: bo
     return {
         
         'from': json['from'],
+        'fromName': json['from_name'] == null ? undefined : json['from_name'],
         'to': json['to'],
         'cc': json['cc'] == null ? undefined : json['cc'],
         'bcc': json['bcc'] == null ? undefined : json['bcc'],
@@ -238,6 +245,7 @@ export function SendEmailRequestToJSONTyped(value?: SendEmailRequest | null, ign
     return {
         
         'from': value['from'],
+        'from_name': value['fromName'],
         'to': value['to'],
         'cc': value['cc'],
         'bcc': value['bcc'],

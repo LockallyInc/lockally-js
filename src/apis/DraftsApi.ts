@@ -151,7 +151,7 @@ export interface DraftsApiInterface {
     createReplyDraftRequestOpts(requestParameters: CreateReplyDraftRequest): Promise<runtime.RequestOpts>;
 
     /**
-     * The safe default over /reply: the deterministic policy engine auto-sends clean in-thread replies and holds anything risky (PII, new recipients, injection-flagged threads, always-approve mailboxes) for human approval. Fires draft.pending_approval when held. Idempotency-Key required.
+     * The safe default over /reply: the deterministic policy engine auto-sends clean in-thread replies and holds anything risky (PII, new recipients, injection-flagged threads, always-approve mailboxes) for human approval. A key with inboxes:draft but not inboxes:write may only propose: its clean drafts are held too, never auto-sent. Fires draft.pending_approval when held. Idempotency-Key required.
      * @summary Propose a reply as a draft
      * @param {string} threadID 
      * @param {string} idempotencyKey 
@@ -162,7 +162,7 @@ export interface DraftsApiInterface {
     createReplyDraftRaw(requestParameters: CreateReplyDraftRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<DraftResult>>;
 
     /**
-     * The safe default over /reply: the deterministic policy engine auto-sends clean in-thread replies and holds anything risky (PII, new recipients, injection-flagged threads, always-approve mailboxes) for human approval. Fires draft.pending_approval when held. Idempotency-Key required.
+     * The safe default over /reply: the deterministic policy engine auto-sends clean in-thread replies and holds anything risky (PII, new recipients, injection-flagged threads, always-approve mailboxes) for human approval. A key with inboxes:draft but not inboxes:write may only propose: its clean drafts are held too, never auto-sent. Fires draft.pending_approval when held. Idempotency-Key required.
      * Propose a reply as a draft
      */
     createReplyDraft(requestParameters: CreateReplyDraftRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<DraftResult>;
@@ -470,7 +470,7 @@ export class DraftsApi extends runtime.BaseAPI implements DraftsApiInterface {
     }
 
     /**
-     * The safe default over /reply: the deterministic policy engine auto-sends clean in-thread replies and holds anything risky (PII, new recipients, injection-flagged threads, always-approve mailboxes) for human approval. Fires draft.pending_approval when held. Idempotency-Key required.
+     * The safe default over /reply: the deterministic policy engine auto-sends clean in-thread replies and holds anything risky (PII, new recipients, injection-flagged threads, always-approve mailboxes) for human approval. A key with inboxes:draft but not inboxes:write may only propose: its clean drafts are held too, never auto-sent. Fires draft.pending_approval when held. Idempotency-Key required.
      * Propose a reply as a draft
      */
     async createReplyDraftRaw(requestParameters: CreateReplyDraftRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<DraftResult>> {
@@ -481,7 +481,7 @@ export class DraftsApi extends runtime.BaseAPI implements DraftsApiInterface {
     }
 
     /**
-     * The safe default over /reply: the deterministic policy engine auto-sends clean in-thread replies and holds anything risky (PII, new recipients, injection-flagged threads, always-approve mailboxes) for human approval. Fires draft.pending_approval when held. Idempotency-Key required.
+     * The safe default over /reply: the deterministic policy engine auto-sends clean in-thread replies and holds anything risky (PII, new recipients, injection-flagged threads, always-approve mailboxes) for human approval. A key with inboxes:draft but not inboxes:write may only propose: its clean drafts are held too, never auto-sent. Fires draft.pending_approval when held. Idempotency-Key required.
      * Propose a reply as a draft
      */
     async createReplyDraft(requestParameters: CreateReplyDraftRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<DraftResult> {
